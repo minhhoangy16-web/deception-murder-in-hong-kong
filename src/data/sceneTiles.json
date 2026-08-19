@@ -1,0 +1,212 @@
+[
+  {
+    "id": "tile_cause_of_death",
+    "titleVi": "Nguyên Nhân Tử Vong",
+    "titleEn": "Cause of Death",
+    "type": "CAUSE_OF_DEATH",
+    "options": [
+      { "index": 0, "labelVi": "Nghẹt Thở / Tắc Khí", "labelEn": "Suffocation" },
+      { "index": 1, "labelVi": "Mất Máu Trầm Trọng", "labelEn": "Severe Loss of Blood" },
+      { "index": 2, "labelVi": "Trúng Độc Tức Thì", "labelEn": "Poisoning" },
+      { "index": 3, "labelVi": "Chấn Thương Nặng", "labelEn": "Severe Injury / Trauma" },
+      { "index": 4, "labelVi": "Điện Giật / Bỏng Nặng", "labelEn": "Electrocution / Burn" },
+      { "index": 5, "labelVi": "Bệnh Lý Bất Ngờ / Sốc", "labelEn": "Sudden Illness / Shock" }
+    ]
+  },
+  {
+    "id": "tile_location",
+    "titleVi": "Hiện Trường Vụ Án",
+    "titleEn": "Location of Crime",
+    "type": "LOCATION",
+    "options": [
+      { "index": 0, "labelVi": "Phòng Khách / Nhà Riêng", "labelEn": "Living Room / Residence" },
+      { "index": 1, "labelVi": "Khách Sạn / Quán Bar", "labelEn": "Hotel / Bar" },
+      { "index": 2, "labelVi": "Bếp Ăn / Nhà Hàng", "labelEn": "Kitchen / Restaurant" },
+      { "index": 3, "labelVi": "Bờ Biển / Bến Tàu", "labelEn": "Seashore / Harbor" },
+      { "index": 4, "labelVi": "Rừng Cây / Công Viên", "labelEn": "Forest / Public Park" },
+      { "index": 5, "labelVi": "Công Trường / Hẻm Vắng", "labelEn": "Construction / Dark Alley" }
+    ]
+  },
+  {
+    "id": "tile_victim_state",
+    "titleVi": "Tình Trạng Nạn Nhân",
+    "titleEn": "Victim's State",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Nguyên Vẹn / Bình Yên", "labelEn": "Intact / Peaceful" },
+      { "index": 1, "labelVi": "Vặn Vẹo / Co Quắp", "labelEn": "Twisted / Convulsed" },
+      { "index": 2, "labelVi": "Nhiều Vết Trầy Xước", "labelEn": "Scratches / Bruises" },
+      { "index": 3, "labelVi": "Bị Trói Buộc Chặt", "labelEn": "Tied Up / Bound" },
+      { "index": 4, "labelVi": "Ướt Sũng Nước", "labelEn": "Soaked in Water" },
+      { "index": 5, "labelVi": "Cháy Xém / Bỏng Đỏ", "labelEn": "Charred / Burned" }
+    ]
+  },
+  {
+    "id": "tile_weather",
+    "titleVi": "Thời Tiết Lúc Xảy Ra",
+    "titleEn": "Weather at Crime",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Mưa Bão Dữ Dội", "labelEn": "Stormy Rain" },
+      { "index": 1, "labelVi": "Nắng Gắt Oi Ả", "labelEn": "Scorching Sun" },
+      { "index": 2, "labelVi": "Sương Mù Dày Đặc", "labelEn": "Dense Fog" },
+      { "index": 3, "labelVi": "Gió Lạnh Buốt Giá", "labelEn": "Freezing Wind" },
+      { "index": 4, "labelVi": "Trời Trong Trăng Sáng", "labelEn": "Clear Moonlit Night" },
+      { "index": 5, "labelVi": "Độ Ẩm Cao Ngột Ngạt", "labelEn": "Humid & Sultry" }
+    ]
+  },
+  {
+    "id": "tile_evidence_left",
+    "titleVi": "Dấu Vết Để Lại",
+    "titleEn": "Evidence Left Behind",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Dấu Vết Sinh Học", "labelEn": "Biological Traces" },
+      { "index": 1, "labelVi": "Mùi Hương Lạ Kì", "labelEn": "Peculiar Scent" },
+      { "index": 2, "labelVi": "Vết Bẩn / Chất Lỏng", "labelEn": "Stains / Fluid" },
+      { "index": 3, "labelVi": "Dấu Vết Đập Phá", "labelEn": "Damaged Objects" },
+      { "index": 4, "labelVi": "Mẩu Giấy / Tài Liệu", "labelEn": "Paper / Documents" },
+      { "index": 5, "labelVi": "Không Để Lại Gì Rõ Ràng", "labelEn": "Clean / Concealed" }
+    ]
+  },
+  {
+    "id": "tile_motive",
+    "titleVi": "Động Cơ Gây Án",
+    "titleEn": "Motive of Crime",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Thù Hằn Cá Nhân", "labelEn": "Personal Hatred" },
+      { "index": 1, "labelVi": "Tiền Bạc & Lợi Ích", "labelEn": "Money & Wealth" },
+      { "index": 2, "labelVi": "Tình Ái Ghen Tuông", "labelEn": "Jealousy / Romance" },
+      { "index": 3, "labelVi": "Bịt Miệng / Che Giấu Bí Mật", "labelEn": "Silencing a Secret" },
+      { "index": 4, "labelVi": "Bột Phát / Mất Kiểm Soát", "labelEn": "Sudden Rage / Spontaneous" },
+      { "index": 5, "labelVi": "Thanh Trừng Quyền Lực", "labelEn": "Power Struggle" }
+    ]
+  },
+  {
+    "id": "tile_social_relationship",
+    "titleVi": "Mối Quan Hệ Xã Hội",
+    "titleEn": "Social Relationship",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Người Thân Trong Gia Đình", "labelEn": "Family Relative" },
+      { "index": 1, "labelVi": "Đồng Nghiệp / Đối Tác", "labelEn": "Colleague / Partner" },
+      { "index": 2, "labelVi": "Bạn Bè Lâu Năm", "labelEn": "Longtime Friend" },
+      { "index": 3, "labelVi": "Tình Nhân Bí Mật", "labelEn": "Secret Lover" },
+      { "index": 4, "labelVi": "Kẻ Thù Truyền Kiếp", "labelEn": "Sworn Enemy" },
+      { "index": 5, "labelVi": "Người Lạ Hoàn Toàn", "labelEn": "Complete Stranger" }
+    ]
+  },
+  {
+    "id": "tile_duration",
+    "titleVi": "Thời Gian Gây Án",
+    "titleEn": "Duration of Crime",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Chớp Nhoáng Vài Giây", "labelEn": "Instantaneous (Seconds)" },
+      { "index": 1, "labelVi": "Ngắn (Vài Phút)", "labelEn": "Brief (A few minutes)" },
+      { "index": 2, "labelVi": "Kéo Dài Nửa Tiếng", "labelEn": "Prolonged (Half hour)" },
+      { "index": 3, "labelVi": "Dằng Dặc Nhiều Giờ", "labelEn": "Several Hours" },
+      { "index": 4, "labelVi": "Xuyên Đêm Đến Rạng Sáng", "labelEn": "Overnight to Dawn" },
+      { "index": 5, "labelVi": "Có Tính Toán Trước Vài Ngày", "labelEn": "Planned Over Days" }
+    ]
+  },
+  {
+    "id": "tile_smell",
+    "titleVi": "Mùi Hương Tại Hiện Trường",
+    "titleEn": "Smell at Scene",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Mùi Thuốc Khói / Khét", "labelEn": "Smoke / Burnt" },
+      { "index": 1, "labelVi": "Mùi Nước Hoa / Phấn Thơm", "labelEn": "Perfume / Floral" },
+      { "index": 2, "labelVi": "Mùi Rượu / Bia Lên Men", "labelEn": "Alcohol / Brewery" },
+      { "index": 3, "labelVi": "Mùi Hóa Chất / Thuốc Khử Trùng", "labelEn": "Chemical / Disinfectant" },
+      { "index": 4, "labelVi": "Mùi Ẩm Mốc / Đất Tanh", "labelEn": "Moldy / Damp Earth" },
+      { "index": 5, "labelVi": "Hoàn Toàn Không Mùi", "labelEn": "Odorless" }
+    ]
+  },
+  {
+    "id": "tile_sound",
+    "titleVi": "Âm Thanh Trước Khi Tử Vong",
+    "titleEn": "Sudden Sound",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Tiếng Nổ Đinh Tai", "labelEn": "Loud Bang / Gunshot" },
+      { "index": 1, "labelVi": "Tiếng La Hét Thất Thanh", "labelEn": "Terrified Scream" },
+      { "index": 2, "labelVi": "Tiếng Đổ Vỡ Keng", "labelEn": "Crashing Glass" },
+      { "index": 3, "labelVi": "Tiếng Xì Xào Tranh Cãi", "labelEn": "Whispered Argument" },
+      { "index": 4, "labelVi": "Tiếng Bước Chân Dồn Dập", "labelEn": "Frantic Footsteps" },
+      { "index": 5, "labelVi": "Hoàn Toàn Tĩnh Lặng", "labelEn": "Dead Silence" }
+    ]
+  },
+  {
+    "id": "tile_corpse_expression",
+    "titleVi": "Nét Mặt Nạn Nhân",
+    "titleEn": "Expression on Corpse",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Kinh Hoàng Tột Độ", "labelEn": "Extreme Terror" },
+      { "index": 1, "labelVi": "Tức Giận Dữ Tội", "labelEn": "Furious Anger" },
+      { "index": 2, "labelVi": "Bình Thản Thanh Thản", "labelEn": "Calm & Serene" },
+      { "index": 3, "labelVi": "Bàng Hoàng Kinh Ngạc", "labelEn": "Shocked & Stunned" },
+      { "index": 4, "labelVi": "Đau Đớn Oằn Oại", "labelEn": "Agonized Pain" },
+      { "index": 5, "labelVi": "Mơ Hồ Không Cảm Xúc", "labelEn": "Blank / Indifferent" }
+    ]
+  },
+  {
+    "id": "tile_victim_clothing",
+    "titleVi": "Trang Phục Nạn Nhân",
+    "titleEn": "Victim's Clothes",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Lộng Lẫy Sang Trọng", "labelEn": "Glamorous / Formal" },
+      { "index": 1, "labelVi": "Đồ Ở Nhà / Đồ Ngủ", "labelEn": "Pajamas / Casual" },
+      { "index": 2, "labelVi": "Trang Phục Đi Làm / Suit", "labelEn": "Business Suit" },
+      { "index": 3, "labelVi": "Rách Rưới / Xộc Xệch", "labelEn": "Torn & Disheveled" },
+      { "index": 4, "labelVi": "Đồ Thể Thao Năng Động", "labelEn": "Sportswear" },
+      { "index": 5, "labelVi": "Trang Phục Dạ Hội Đen", "labelEn": "Dark Evening Wear" }
+    ]
+  },
+  {
+    "id": "tile_room_state",
+    "titleVi": "Tình Trạng Căn Phòng",
+    "titleEn": "State of the Room",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Gọn Gàng Ngăn Nắp", "labelEn": "Neat and Orderly" },
+      { "index": 1, "labelVi": "Hỗn Loạn Đảo Lộn", "labelEn": "Utter Chaos / Ransacked" },
+      { "index": 2, "labelVi": "Khóa Cửa Trái Kín Mít", "labelEn": "Locked from Inside" },
+      { "index": 3, "labelVi": "Cửa Sổ Mở Toang", "labelEn": "Open Window" },
+      { "index": 4, "labelVi": "Tối Đen Mịt Mù", "labelEn": "Pitch Black" },
+      { "index": 5, "labelVi": "Ánh Đèn Chập Chờn", "labelEn": "Flickering Lights" }
+    ]
+  },
+  {
+    "id": "tile_general_impression",
+    "titleVi": "Ấn Tượng Tổng Thể",
+    "titleEn": "General Impression",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Chuyên Nghiệp Máu Lạnh", "labelEn": "Cold & Professional" },
+      { "index": 1, "labelVi": "Vụng Về Nghiệp Dư", "labelEn": "Clumsy & Amateur" },
+      { "index": 2, "labelVi": "Bí Ẩn Kì Quặc", "labelEn": "Bizarre & Occult" },
+      { "index": 3, "labelVi": "Hung Bạo Tàn Nhẫn", "labelEn": "Brutal & Savage" },
+      { "index": 4, "labelVi": "Thanh Lịch Tinh Tế", "labelEn": "Subtle & Elegant" },
+      { "index": 5, "labelVi": "Nghệ Thuật Kịch Tính", "labelEn": "Dramatic & Theatrical" }
+    ]
+  },
+  {
+    "id": "tile_day_time",
+    "titleVi": "Thời Điểm Trong Ngày",
+    "titleEn": "Time of Day",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Sáng Sớm Tinh Mơ", "labelEn": "Early Morning" },
+      { "index": 1, "labelVi": "Buổi Trưa Nắng Chói", "labelEn": "High Noon" },
+      { "index": 2, "labelVi": "Hoàng Hôn Xế Chiều", "labelEn": "Twilight / Dusk" },
+      { "index": 3, "labelVi": "Đêm Muộn Tĩnh Mịch", "labelEn": "Late Night" },
+      { "index": 4, "labelVi": "Nửa Đêm Canh Ba", "labelEn": "Midnight" },
+      { "index": 5, "labelVi": "Giờ Cao Điểm Tấp Nập", "labelEn": "Rush Hour" }
+    ]
+  }
+]
