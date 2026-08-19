@@ -477,25 +477,41 @@ export class GameManager {
           newTile
         );
 
+        let discardedTileName = "";
         if (aiResult.discardedTileId) {
           const disc = room.activeTiles.find(t => t.id === aiResult.discardedTileId);
-          if (disc) room.discardedTiles.push(disc);
+          if (disc) {
+            discardedTileName = disc.titleVi;
+            room.discardedTiles.push(disc);
+          }
         }
         room.activeTiles = aiResult.placedTiles;
         if (aiResult.notes) {
           room.forensicNotes = [...(room.forensicNotes || []), ...aiResult.notes];
         }
+
+        const newTileNote = aiResult.notes?.find(n => n.tileId === newTile.id);
+        const markedOption = newTileNote ? `[${newTileNote.selectedOption}]` : "";
+
+        room.logs.push({
+          id: "log_" + Date.now(),
+          type: "FORENSIC",
+          messageVi: `VÒNG 2 BẮT ĐẦU: Pháp y đã BỎ thẻ "${discardedTileName || "ít liên quan"}" và THAY THẾ bằng thẻ mới "${newTile.titleVi}" -> Ghim dấu vết: ${markedOption}!`,
+          messageEn: `ROUND 2 STARTED: Forensic Scientist discarded "${discardedTileName || "old tile"}" and replaced it with "${newTile.titleEn}" -> Marker: ${markedOption}!`,
+          timestamp: Date.now(),
+        });
+      } else {
+        room.logs.push({
+          id: "log_" + Date.now(),
+          type: "FORENSIC",
+          messageVi: `VÒNG 2 BẮT ĐẦU: Tiếp tục thảo luận các manh mối trên bàn!`,
+          messageEn: `ROUND 2 STARTED: Continue discussing the clues on the board!`,
+          timestamp: Date.now(),
+        });
       }
 
       room.phase = "DAY_ROUND_2";
       room.roundTimeRemaining = room.settings.roundDurationSeconds || 90;
-      room.logs.push({
-        id: "log_" + Date.now(),
-        type: "FORENSIC",
-        messageVi: `VÒNG 2 BẮT ĐẦU: Pháp y đã thay thế 1 thẻ manh mối cũ bằng 1 manh mối mới sắc bén hơn!`,
-        messageEn: `ROUND 2 STARTED: Forensic Scientist replaced 1 old tile with a new clue!`,
-        timestamp: Date.now(),
-      });
       this.startRoundTimer(roomId);
       this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
       return room;
@@ -524,25 +540,38 @@ export class GameManager {
           newTile
         );
 
+        let discardedTileName = "";
         if (aiResult.discardedTileId) {
           const disc = room.activeTiles.find(t => t.id === aiResult.discardedTileId);
-          if (disc) room.discardedTiles.push(disc);
+          if (disc) {
+            discardedTileName = disc.titleVi;
+            room.discardedTiles.push(disc);
+          }
         }
         room.activeTiles = aiResult.placedTiles;
         if (aiResult.notes) {
           room.forensicNotes = [...(room.forensicNotes || []), ...aiResult.notes];
         }
-      }
 
-      room.phase = "DAY_ROUND_3";
-      room.roundTimeRemaining = room.settings.roundDurationSeconds || 90;
-      room.logs.push({
-        id: "log_" + Date.now(),
-        type: "FORENSIC",
-        messageVi: `VÒNG 3 (VÒNG CUỐI): Pháp y tung manh mối quyết định cuối cùng! Hãy tận dụng lượt phá án!`,
-        messageEn: `ROUND 3 (FINAL ROUND): Final forensic clue placed! Make your solve count!`,
-        timestamp: Date.now(),
-      });
+        const newTileNote = aiResult.notes?.find(n => n.tileId === newTile.id);
+        const markedOption = newTileNote ? `[${newTileNote.selectedOption}]` : "";
+
+        room.logs.push({
+          id: "log_" + Date.now(),
+          type: "FORENSIC",
+          messageVi: `VÒNG 3 (VÒNG CUỐI): Pháp y đã BỎ thẻ "${discardedTileName || "ít liên quan"}" và THAY THẾ bằng thẻ quyết định "${newTile.titleVi}" -> Ghim: ${markedOption}! Hãy tận dụng lượt phá án!`,
+          messageEn: `ROUND 3 (FINAL ROUND): Discarded "${discardedTileName || "old tile"}" and replaced with "${newTile.titleEn}" -> Marker: ${markedOption}! Make your solve count!`,
+          timestamp: Date.now(),
+        });
+      } else {
+        room.logs.push({
+          id: "log_" + Date.now(),
+          type: "FORENSIC",
+          messageVi: `VÒNG 3 (VÒNG CUỐI): Hãy tận dụng lượt phá án cuối cùng!`,
+          messageEn: `ROUND 3 (FINAL ROUND): Make your final solve count!`,
+          timestamp: Date.now(),
+        });
+      }
       this.startRoundTimer(roomId);
       this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
       return room;

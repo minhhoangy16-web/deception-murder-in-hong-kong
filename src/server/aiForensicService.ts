@@ -10,7 +10,7 @@ interface AIPlacementResult {
 }
 
 // Local Semantic Matcher for Heuristic Engine & Fallback
-function heuristicScoreOption(
+export function heuristicScoreOption(
   tile: SceneTile,
   optionIndex: number,
   means: Card,
@@ -33,22 +33,17 @@ function heuristicScoreOption(
 
   // --- 1. CAUSE OF DEATH (Nguyên Nhân Tử Vong) ---
   if (tile.type === "CAUSE_OF_DEATH" || tile.id === "tile_cause_of_death") {
-    // Poison / Toxic / Chemical / Drug
     if (mVi.includes("độc") || mVi.includes("thuốc") || mVi.includes("xyanua") || mVi.includes("poison") || mVi.includes("axit") || mVi.includes("tiêm") || mVi.includes("nấm") || mVi.includes("nhiễm")) {
       if (optLabelEn.includes("poison") || optLabelVi.includes("độc")) {
         score += 150;
         reason = `Hung khí dạng độc dược/hóa chất (${means.nameVi}) dẫn đến trúng độc`;
       }
-    }
-    // Suffocation / Choking / Gas / Drowning / Hanging / Plastic bag / Pillow
-    else if (mVi.includes("ngạt") || mVi.includes("thừng") || mVi.includes("gối") || mVi.includes("túi") || mVi.includes("nilon") || mVi.includes("khăn") || mVi.includes("ga độc") || mVi.includes("đuối") || mVi.includes("bọc")) {
+    } else if (mVi.includes("ngạt") || mVi.includes("thừng") || mVi.includes("gối") || mVi.includes("túi") || mVi.includes("nilon") || mVi.includes("khăn") || mVi.includes("ga độc") || mVi.includes("đuối") || mVi.includes("bọc")) {
       if (optLabelEn.includes("suffocation") || optLabelVi.includes("ngạt")) {
         score += 150;
         reason = `Hung khí gây bít đường thở/ngạt khí (${means.nameVi})`;
       }
-    }
-    // Severe Injury / Loss of Blood (Sharp blades, Cleaver, Knife, Sword, Dagger, Machete, Drill)
-    else if (mVi.includes("dao") || mVi.includes("găm") || mVi.includes("kiếm") || mVi.includes("rựa") || mVi.includes("cắt") || mVi.includes("cổ") || mVi.includes("chặt") || mVi.includes("kéo")) {
+    } else if (mVi.includes("dao") || mVi.includes("găm") || mVi.includes("kiếm") || mVi.includes("rựa") || mVi.includes("cắt") || mVi.includes("cổ") || mVi.includes("chặt") || mVi.includes("kéo")) {
       if (optLabelEn.includes("blood") || optLabelVi.includes("mất máu")) {
         score += 140;
         reason = `Vũ khí sắc bén gây vết thương hở và mất máu cấp (${means.nameVi})`;
@@ -56,16 +51,12 @@ function heuristicScoreOption(
         score += 120;
         reason = `Vũ khí sắc nhọn gây chấn thương nặng (${means.nameVi})`;
       }
-    }
-    // Blunt force / Impact / Gunshot / Heavy fall / Vehicle / Brick / Hammer / Bat
-    else if (mVi.includes("búa") || mVi.includes("gậy") || mVi.includes("gạch") || mVi.includes("súng") || mVi.includes("bắn") || mVi.includes("xe") || mVi.includes("lu") || mVi.includes("vực") || mVi.includes("tạ") || mVi.includes("ống thép") || mVi.includes("bê tông")) {
+    } else if (mVi.includes("búa") || mVi.includes("gậy") || mVi.includes("gạch") || mVi.includes("súng") || mVi.includes("bắn") || mVi.includes("xe") || mVi.includes("lu") || mVi.includes("vực") || mVi.includes("tạ") || mVi.includes("ống thép") || mVi.includes("bê tông")) {
       if (optLabelEn.includes("injury") || optLabelVi.includes("chấn thương") || optLabelVi.includes("vết rách")) {
         score += 140;
         reason = `Lực tác động vật lý cực mạnh gây chấn thương nghiêm trọng (${means.nameVi})`;
       }
-    }
-    // Electrocution / Burn / Fire / Boiling water / Explosion
-    else if (mVi.includes("điện") || mVi.includes("lửa") || mVi.includes("nổ") || mVi.includes("nước sôi") || mVi.includes("dầu") || mVi.includes("xăng") || mVi.includes("lò")) {
+    } else if (mVi.includes("điện") || mVi.includes("lửa") || mVi.includes("nổ") || mVi.includes("nước sôi") || mVi.includes("dầu") || mVi.includes("xăng") || mVi.includes("lò")) {
       if (optLabelEn.includes("accident") || optLabelVi.includes("tai nạn") || optLabelEn.includes("injury")) {
         score += 130;
         reason = `Tai nạn do nhiệt/điện giật/bỏng nặng (${means.nameVi})`;
@@ -75,36 +66,27 @@ function heuristicScoreOption(
 
   // --- 2. LOCATION OF CRIME (Hiện Trường Vụ Án - Phải dung hòa CẢ Means & Clue) ---
   if (tile.type === "LOCATION" || tile.id === "tile_location") {
-    // Kitchen / Restaurant / Food & Drinks
     if (mVi.includes("bếp") || mVi.includes("nước sôi") || mVi.includes("lò") || cVi.includes("cà phê") || cVi.includes("đồ ăn") || cVi.includes("bánh") || cVi.includes("trứng") || cVi.includes("bát") || cVi.includes("đũa") || cVi.includes("rượu")) {
       if (optLabelEn.includes("kitchen") || optLabelVi.includes("bếp") || optLabelEn.includes("restaurant") || optLabelVi.includes("nhà hàng") || optLabelVi.includes("quán")) {
         score += 150;
         reason = `Địa điểm phù hợp với thực phẩm và đồ gia dụng bếp (${means.nameVi} + ${clue.nameVi})`;
       }
-    }
-    // Living Room / Home / Bedroom / Residence
-    else if (cVi.includes("gối") || cVi.includes("quần") || cVi.includes("ảnh") || cVi.includes("nhẫn") || cVi.includes("chậu cây") || cVi.includes("cây cảnh") || mVi.includes("gậy bóng chày") || cVi.includes("tạp dề") || cVi.includes("ủi") || cVi.includes("quạt") || cVi.includes("lò xo")) {
+    } else if (cVi.includes("gối") || cVi.includes("quần") || cVi.includes("ảnh") || cVi.includes("nhẫn") || cVi.includes("chậu cây") || cVi.includes("cây cảnh") || mVi.includes("gậy bóng chày") || cVi.includes("tạp dề") || cVi.includes("ủi") || cVi.includes("quạt") || cVi.includes("lò xo")) {
       if (optLabelEn.includes("living") || optLabelVi.includes("phòng khách") || optLabelVi.includes("nhà riêng") || optLabelEn.includes("bedroom") || optLabelVi.includes("phòng ngủ")) {
         score += 145;
         reason = `Địa điểm sinh hoạt tại gia nơi có cả ${means.nameVi} và ${clue.nameVi}`;
       }
-    }
-    // Hotel / Bar / Pub / Entertainment
-    else if (cVi.includes("thẻ") || cVi.includes("khách sạn") || cVi.includes("keycard") || cVi.includes("son") || cVi.includes("gạt tàn") || cVi.includes("thuốc lá") || cVi.includes("rượu") || cVi.includes("băng") || cVi.includes("vé")) {
+    } else if (cVi.includes("thẻ") || cVi.includes("khách sạn") || cVi.includes("keycard") || cVi.includes("son") || cVi.includes("gạt tàn") || cVi.includes("thuốc lá") || cVi.includes("rượu") || cVi.includes("băng") || cVi.includes("vé")) {
       if (optLabelEn.includes("hotel") || optLabelVi.includes("khách sạn") || optLabelEn.includes("pub") || optLabelVi.includes("quán bar") || optLabelVi.includes("phòng trọ")) {
         score += 145;
         reason = `Địa điểm lưu trú hoặc tụ tập giải trí (${clue.nameVi})`;
       }
-    }
-    // Office / School / Library / Bank / Tech
-    else if (cVi.includes("máy tính") || cVi.includes("bàn phím") || cVi.includes("usb") || cVi.includes("tài liệu") || cVi.includes("chữ kí") || cVi.includes("chứng chỉ") || cVi.includes("tiền") || cVi.includes("kho") || cVi.includes("từ điển") || cVi.includes("ghim")) {
+    } else if (cVi.includes("máy tính") || cVi.includes("bàn phím") || cVi.includes("usb") || cVi.includes("tài liệu") || cVi.includes("chữ kí") || cVi.includes("chứng chỉ") || cVi.includes("tiền") || cVi.includes("kho") || cVi.includes("từ điển") || cVi.includes("ghim")) {
       if (optLabelEn.includes("workplace") || optLabelVi.includes("văn phòng") || optLabelEn.includes("bank") || optLabelVi.includes("ngân hàng") || optLabelEn.includes("school") || optLabelVi.includes("trường")) {
         score += 145;
         reason = `Không gian làm việc/hành chính liên quan đến ${clue.nameVi}`;
       }
-    }
-    // Outdoors / Construction / Harbor / Seashore / Park / Forest / Alley
-    else if (mVi.includes("neo") || mVi.includes("cần câu") || mVi.includes("cát") || mVi.includes("biển") || mVi.includes("gạch") || mVi.includes("xi măng") || mVi.includes("búa") || mVi.includes("xe lu") || mVi.includes("khoan") || mVi.includes("dầu hỏa")) {
+    } else if (mVi.includes("neo") || mVi.includes("cần câu") || mVi.includes("cát") || mVi.includes("biển") || mVi.includes("gạch") || mVi.includes("xi măng") || mVi.includes("búa") || mVi.includes("xe lu") || mVi.includes("khoan") || mVi.includes("dầu hỏa")) {
       if (optLabelEn.includes("construction") || optLabelVi.includes("công trường") || optLabelEn.includes("alley") || optLabelVi.includes("hẻm") || optLabelEn.includes("harbor") || optLabelVi.includes("bến tàu") || optLabelEn.includes("park") || optLabelVi.includes("công viên")) {
         score += 140;
         reason = `Hiện trường thi công hoặc khu vực ngoài trời gắn liền ${means.nameVi}`;
@@ -167,7 +149,7 @@ function heuristicScoreOption(
     }
   }
 
-  // Deduct small points if this option also strongly matches innocent players' cards (to reduce misleading noise)
+  // Deduct points if this option also matches innocent players' cards
   innocentMeans.forEach(im => {
     if (im.nameVi && optLabelVi.includes(im.nameVi.toLowerCase())) {
       score -= 15;
@@ -175,6 +157,39 @@ function heuristicScoreOption(
   });
 
   return { score, reason };
+}
+
+// Find the weakest EVENT scene tile to discard in Round 2 and Round 3
+export function findWeakestSceneTileToDiscard(
+  activeTiles: SceneTile[],
+  means: Card,
+  clue: Card,
+  innocentMeans: Card[],
+  innocentClues: Card[]
+): { tileToDiscard: SceneTile; reason: string } {
+  // Only EVENT tiles can be discarded (CAUSE_OF_DEATH and LOCATION are permanent)
+  const replaceableTiles = activeTiles.filter(t => t.type === "EVENT");
+
+  if (replaceableTiles.length === 0) {
+    return { tileToDiscard: activeTiles[2] || activeTiles[0], reason: "Thay thế manh mối cũ" };
+  }
+
+  let lowestScore = 999999;
+  let weakestTile = replaceableTiles[0];
+  let discardReason = `Thẻ "${weakestTile.titleVi}" ít liên quan nhất đến vụ án`;
+
+  replaceableTiles.forEach(tile => {
+    const currentMarkerIdx = tile.markerIndex ?? 0;
+    const scoreResult = heuristicScoreOption(tile, currentMarkerIdx, means, clue, innocentMeans, innocentClues);
+
+    if (scoreResult.score < lowestScore) {
+      lowestScore = scoreResult.score;
+      weakestTile = tile;
+      discardReason = `AI loại bỏ thẻ "${tile.titleVi}" vì ít liên quan nhất đến hung khí & bằng chứng`;
+    }
+  });
+
+  return { tileToDiscard: weakestTile, reason: discardReason };
 }
 
 // AI Placement Analysis
@@ -193,6 +208,16 @@ export async function runAIForensicAnalysis(
   const innocentMeans = allPlayers.flatMap(p => p.meansCards).filter(m => m.id !== targetMeans.id);
   const innocentClues = allPlayers.flatMap(p => p.clueCards).filter(c => c.id !== targetClue.id);
 
+  // For Round 2/3: Determine which EVENT tile to discard if not provided
+  let computedDiscardId = tileToDiscardId;
+  let computedDiscardReason = discardReason;
+
+  if (round > 1 && newTileToPlace && !computedDiscardId) {
+    const discardInfo = findWeakestSceneTileToDiscard(activeTiles, targetMeans, targetClue, innocentMeans, innocentClues);
+    computedDiscardId = discardInfo.tileToDiscard.id;
+    computedDiscardReason = discardInfo.reason;
+  }
+
   const tilesToAnalyze = round === 1 ? activeTiles : (newTileToPlace ? [newTileToPlace] : []);
 
   // 1. Google Gemini Provider
@@ -203,15 +228,14 @@ export async function runAIForensicAnalysis(
 Your sole goal is to place forensic markers (0-5) on scene tiles to guide detectives to the EXACT combination of Key Means and Key Clue.
 
 SECRET MURDER COMBINATION:
-- Key Means (Hung Khí): ${targetMeans.nameVi} (${targetMeans.nameEn}) [Category: ${targetMeans.category || "General"}]
-- Key Clue (Bằng Chứng/Manh Mối): ${targetClue.nameVi} (${targetClue.nameEn}) [Category: ${targetClue.category || "General"}]
+- Key Means (Hung Khí): ${targetMeans.nameVi} (${targetMeans.nameEn})
+- Key Clue (Bằng Chứng): ${targetClue.nameVi} (${targetClue.nameEn})
 
-CRITICAL LOGIC & REASONING RULES:
+CRITICAL LOGIC RULES:
 1. ALWAYS cross-correlate BOTH items together!
-2. For LOCATION OF CRIME: Choose a location where BOTH items naturally coexist or make sense together (e.g., Baseball bat + Plant pot -> Living Room/Yard; Cleaver + Food -> Kitchen/Restaurant; Keycard + Ring -> Hotel/Bedroom; USB + Keyboard -> Office/Workplace).
+2. For LOCATION OF CRIME: Choose a location where BOTH items naturally coexist.
 3. For CAUSE OF DEATH: Accurately match the physical mechanism of the Key Means (${targetMeans.nameVi}).
 4. For EVENT TILES: Pick the option that uniquely describes a prominent attribute of the Key Clue (${targetClue.nameVi}) or Key Means (${targetMeans.nameVi}).
-5. Avoid pointing towards innocent suspects' items on the table.
 
 Tiles to mark:
 ${tilesToAnalyze.map(t => `
@@ -224,7 +248,7 @@ Respond ONLY with a valid JSON array in this exact schema:
 [
   {
     "tileId": "string",
-    "optionIndex": number, // integer 0 to 5
+    "optionIndex": number,
     "reasoning": "Detailed sentence in Vietnamese explaining how this choice connects BOTH Key Means and Key Clue"
   }
 ]`;
@@ -269,10 +293,11 @@ Respond ONLY with a valid JSON array in this exact schema:
             selectedOption: chosenOpt.labelVi,
             reasoning: match?.reasoning || `AI bổ sung manh mối mới: ${chosenOpt.labelVi}`,
           });
-          resultTiles = activeTiles.filter(t => t.id !== tileToDiscardId).concat(updatedNewTile);
+          // Exactly replace the computedDiscardId tile so active tiles remain at 6
+          resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
         }
 
-        return { placedTiles: resultTiles, notes, discardedTileId: tileToDiscardId, discardReason };
+        return { placedTiles: resultTiles, notes, discardedTileId: computedDiscardId, discardReason: computedDiscardReason };
       }
     } catch (err) {
       console.warn("Gemini API call fell back to local Heuristic Engine:", err);
@@ -329,10 +354,11 @@ Return a JSON array of { tileId: string, optionIndex: number, reasoning: string 
             selectedOption: chosenOpt.labelVi,
             reasoning: match?.reasoning || `AI bổ sung manh mối mới: ${chosenOpt.labelVi}`,
           });
-          resultTiles = activeTiles.filter(t => t.id !== tileToDiscardId).concat(updatedNewTile);
+          // Exactly replace the computedDiscardId tile so active tiles remain at 6
+          resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
         }
 
-        return { placedTiles: resultTiles, notes, discardedTileId: tileToDiscardId, discardReason };
+        return { placedTiles: resultTiles, notes, discardedTileId: computedDiscardId, discardReason: computedDiscardReason };
       }
     } catch (err) {
       console.warn("OpenAI API call fell back to local Heuristic Engine:", err);
@@ -401,13 +427,14 @@ Return a JSON array of { tileId: string, optionIndex: number, reasoning: string 
       reasoning: bestReason || `AI bổ sung gợi ý mới thu hẹp nghi phạm`,
     });
 
-    resultTiles = activeTiles.filter(t => t.id !== tileToDiscardId).concat(updatedNewTile);
+    // Exactly replace the computedDiscardId tile so active tiles remain at 6
+    resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
   }
 
   return {
     placedTiles: resultTiles,
     notes,
-    discardedTileId: tileToDiscardId,
-    discardReason,
+    discardedTileId: computedDiscardId,
+    discardReason: computedDiscardReason,
   };
 }

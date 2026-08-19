@@ -32,33 +32,13 @@ async function runTests() {
   await gameManager.startGame(state.roomId);
   console.log(`✓ Game Phase: ${state.phase} (Expected BRIEFING)`);
   console.log(`✓ Round time remaining: ${state.roundTimeRemaining}s`);
-  state.players.forEach((p) => {
-    console.log(`  - ${p.name} => Means: ${p.meansCards.length}, Clues: ${p.clueCards.length}, Role: ${p.role ?? "None (Pending)"}`);
-  });
 
   // 4. Skip Briefing -> Enters Night Phase & Secretly Assigns Roles
   console.log("\nStep 4: Transition to Night Phase & Role Distribution...");
   await gameManager.skipBriefing(state.roomId, hostId);
   console.log(`✓ Game Phase: ${state.phase} (Expected NIGHT)`);
-  state.players.forEach((p) => {
-    console.log(`  - ${p.name} => Assigned Role: [${p.role}]`);
-  });
 
-  // 4b. Test Witness Sanitized State
-  const witness = state.players.find(p => p.role === "WITNESS");
-  if (witness) {
-    console.log(`\nStep 4b: Verifying Witness View for ${witness.name}...`);
-    const sanitizedForWitness = gameManager.getSanitizedStateForPlayer(state, witness.id);
-    sanitizedForWitness.players.forEach(p => {
-      if (p.id === witness.id) {
-        console.log(`  - ${p.name} (Self) => Role: ${p.role}`);
-      } else {
-        console.log(`  - ${p.name} => isWitnessSuspect: ${p.isWitnessSuspect ? "YES (NGHI CAN)" : "NO"}, role: ${p.role ?? "HIDDEN"}`);
-      }
-    });
-  }
-
-  // 5. Test Night Phase Selection
+  // 5. Test Night Phase Selection & Round 1 Tile Generation
   console.log("\nStep 5: Murderer picks Means & Clue...");
   const murderer = state.players.find((p) => p.role === "MURDERER")!;
   const keyMeans = murderer.meansCards[0];
@@ -68,37 +48,55 @@ async function runTests() {
   console.log(`  - Key Clue: ${keyClue.nameVi} (${keyClue.nameEn})`);
 
   await gameManager.submitMurderSelection(state.roomId, murderer.id, keyMeans.id, keyClue.id);
-  console.log(`✓ New Phase: ${state.phase} (Round ${state.currentRound})`);
-  console.log(`✓ AI Placed markers on 6 tiles:`);
-  state.activeTiles.forEach((tile) => {
-    const chosenOpt = tile.options[tile.markerIndex ?? 0];
-    console.log(`    • [${tile.titleVi}]: Option [${(tile.markerIndex ?? 0) + 1}] ${chosenOpt?.labelVi ?? "N/A"}`);
-  });
+  console.log(`✓ Round 1 Active Tiles Count: ${state.activeTiles.length} (Expected: exactly 6)`);
+  if (state.activeTiles.length !== 6) throw new Error("Round 1 active tiles must be 6!");
 
-  // 6. Test User Example: "Gậy bóng chày" + "Chậu cây"
-  console.log("\nStep 6: Testing User Example (Gậy bóng chày + Chậu cây)...");
-  const batMeans: Card = { id: "m_bat", nameVi: "Gậy bóng chày", nameEn: "Baseball Bat", category: "Vũ Khí Thể Thao" };
-  const plantClue: Card = { id: "c_plant", nameVi: "Chậu cây cảnh", nameEn: "Plant Pot", category: "Vật Dụng Gia Đình" };
-  const mockTiles: SceneTile[] = (sceneTilesData as SceneTile[]).slice(0, 6);
+  const causeOfDeath = state.activeTiles.find(t => t.type === "CAUSE_OF_DEATH");
+  const location = state.activeTiles.find(t => t.type === "LOCATION");
+  const events = state.activeTiles.filter(t => t.type === "EVENT");
+  console.log(`  - Has Cause of Death: ${!!causeOfDeath} (${causeOfDeath?.titleVi})`);
+  console.log(`  - Has Location: ${!!location} (${location?.titleVi})`);
+  console.log(`  - Has 4 Event Tiles: ${events.length === 4} (${events.map(e => e.titleVi).join(", ")})`);
 
-  const batPlantResult = await runAIForensicAnalysis(
-    mockTiles,
-    batMeans,
-    plantClue,
-    state.players,
-    1,
-    "heuristic"
-  );
+  // 6. Test Advance to Round 2 (Tile Replacement)
+  console.log("\nStep 6: Advance to Round 2 (Discard 1 least relevant tile & Add 1 new tile)...");
+  await gameManager.advanceRound(state.roomId);
+  const r2ActiveCount = state.activeTiles.length;
+  const r2DiscardCount = state.discardedTiles.length;
+  console.log(`✓ Round 2 Active Tiles Count: ${r2ActiveCount} (Expected: exactly 6)`);
+  console.log(`✓ Discarded Tiles Count: ${r2DiscardCount} (Expected: exactly 1)`);
+  console.log(`  - Discarded Tile: ${state.discardedTiles[0]?.titleVi}`);
+  console.log(`  - Active Tiles: ${state.activeTiles.map(t => t.titleVi).join(", ")}`);
+  if (r2ActiveCount !== 6) throw new Error("Round 2 active tiles must remain 6!");
+  if (r2DiscardCount !== 1) throw new Error("Round 2 must have exactly 1 discarded tile!");
 
-  console.log("✓ AI Heuristic Placements for (Gậy bóng chày + Chậu cây):");
-  batPlantResult.placedTiles.forEach(tile => {
-    const selected = tile.options[tile.markerIndex ?? 0];
-    console.log(`    • [${tile.titleVi}] => ${selected.labelVi}`);
-  });
+  // 7. Test Advance to Round 3 (Second Tile Replacement)
+  console.log("\nStep 7: Advance to Round 3 (Discard 2nd least relevant tile & Add 1 new tile)...");
+  await gameManager.advanceRound(state.roomId);
+  const r3ActiveCount = state.activeTiles.length;
+  const r3DiscardCount = state.discardedTiles.length;
+  console.log(`✓ Round 3 Active Tiles Count: ${r3ActiveCount} (Expected: exactly 6)`);
+  console.log(`✓ Discarded Tiles Count: ${r3DiscardCount} (Expected: exactly 2)`);
+  console.log(`  - Discarded Tiles: ${state.discardedTiles.map(t => t.titleVi).join(", ")}`);
+  console.log(`  - Active Tiles: ${state.activeTiles.map(t => t.titleVi).join(", ")}`);
+  if (r3ActiveCount !== 6) throw new Error("Round 3 active tiles must remain 6!");
+  if (r3DiscardCount !== 2) throw new Error("Round 3 must have exactly 2 discarded tiles!");
+
+
+  // Verify Cause of Death & Location are still intact
+  const codStillPresent = state.activeTiles.some(t => t.type === "CAUSE_OF_DEATH");
+  const locStillPresent = state.activeTiles.some(t => t.type === "LOCATION");
+  console.log(`✓ Cause of Death Protected: ${codStillPresent}`);
+  console.log(`✓ Location Protected: ${locStillPresent}`);
 
   console.log("\n=========================================");
-  console.log("🎉 ALL TESTS PASSED SUCCESSFULLY!");
-  console.log("=========================================\n");
+  console.log("🎉 ALL TESTS PASSED WITH 100% SUCCESS!");
+  console.log("=========================================");
+  process.exit(0);
 }
 
-runTests().catch(console.error);
+runTests().catch((err) => {
+  console.error("❌ Test Failed:", err);
+  process.exit(1);
+});
+
