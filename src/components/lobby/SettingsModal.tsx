@@ -103,11 +103,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <Clock className="w-4 h-4 text-sky-400" />
               Thời Gian Thảo Luận Mỗi Vòng (Round Timer)
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {[
-                { label: "60 giây", val: 60 },
-                { label: "90 giây", val: 90 },
-                { label: "120 giây", val: 120 },
+                { label: "60s (1p)", val: 60 },
+                { label: "90s (1.5p)", val: 90 },
+                { label: "120s (2p)", val: 120 },
+                { label: "180s (3p)", val: 180 },
+                { label: "300s (5p)", val: 300 },
                 { label: "Vô hạn", val: 0 },
               ].map((opt) => (
                 <button
@@ -115,9 +117,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="button"
                   disabled={!isHost}
                   onClick={() => setDuration(opt.val)}
-                  className={`py-2 px-3 text-xs font-medium rounded-xl border transition-all ${
+                  className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all text-center ${
                     duration === opt.val
-                      ? "bg-sky-500/20 border-sky-500 text-sky-300 shadow-sm"
+                      ? "bg-sky-500/20 border-sky-500 text-sky-300 shadow-sm ring-1 ring-sky-500/50"
                       : "bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-600"
                   }`}
                 >

@@ -58,9 +58,9 @@ async function runTests() {
   console.log(`  - Has Location: ${!!location} (${location?.titleVi})`);
   console.log(`  - Has 4 Event Tiles: ${events.length === 4} (${events.map(e => e.titleVi).join(", ")})`);
 
-  // 6. Test Advance to Round 2 (Tile Replacement)
-  console.log("\nStep 6: Advance to Round 2 (Discard 1 least relevant tile & Add 1 new tile)...");
-  await gameManager.advanceRound(state.roomId);
+  // 6. Test Advance to Round 2 using "concludeRound" (Nút Kết Luận)
+  console.log("\nStep 6: Testing 'concludeRound' to Advance to Round 2...");
+  await gameManager.concludeRound(state.roomId, hostId);
   const r2ActiveCount = state.activeTiles.length;
   const r2DiscardCount = state.discardedTiles.length;
   console.log(`✓ Round 2 Active Tiles Count: ${r2ActiveCount} (Expected: exactly 6)`);
@@ -70,9 +70,9 @@ async function runTests() {
   if (r2ActiveCount !== 6) throw new Error("Round 2 active tiles must remain 6!");
   if (r2DiscardCount !== 1) throw new Error("Round 2 must have exactly 1 discarded tile!");
 
-  // 7. Test Advance to Round 3 (Second Tile Replacement)
-  console.log("\nStep 7: Advance to Round 3 (Discard 2nd least relevant tile & Add 1 new tile)...");
-  await gameManager.advanceRound(state.roomId);
+  // 7. Test Advance to Round 3 using "concludeRound" (Nút Kết Luận lần 2)
+  console.log("\nStep 7: Testing 'concludeRound' to Advance to Round 3...");
+  await gameManager.concludeRound(state.roomId, hostId);
   const r3ActiveCount = state.activeTiles.length;
   const r3DiscardCount = state.discardedTiles.length;
   console.log(`✓ Round 3 Active Tiles Count: ${r3ActiveCount} (Expected: exactly 6)`);
@@ -81,6 +81,7 @@ async function runTests() {
   console.log(`  - Active Tiles: ${state.activeTiles.map(t => t.titleVi).join(", ")}`);
   if (r3ActiveCount !== 6) throw new Error("Round 3 active tiles must remain 6!");
   if (r3DiscardCount !== 2) throw new Error("Round 3 must have exactly 2 discarded tiles!");
+
 
 
   // Verify Cause of Death & Location are still intact

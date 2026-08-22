@@ -81,6 +81,12 @@ export function setupSocketHandlers(io: SocketIOServer) {
       if (state) syncRoom(roomId);
     });
 
+    socket.on("conclude_round", async ({ roomId }) => {
+      const state = await gameManager.concludeRound(roomId, socket.id);
+      if (state) syncRoom(roomId);
+    });
+
+
     socket.on("solve_crime", ({ roomId, suspectId, meansCardId, clueCardId }) => {
       const result = gameManager.solveCrime(roomId, socket.id, suspectId, meansCardId, clueCardId);
       if (result.state) syncRoom(roomId);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { formatTime } from "../../lib/utils";
-import { Volume2, VolumeX, HelpCircle, Award, RotateCcw, Copy, Check, Clock, ShieldAlert, Shield, Eye, Search } from "lucide-react";
+import { Volume2, VolumeX, HelpCircle, Award, RotateCcw, Copy, Check, Clock, ShieldAlert, Shield, Eye, Search, FastForward } from "lucide-react";
 
 interface HeaderNavProps {
   onOpenRules: () => void;
@@ -16,7 +16,9 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
     toggleSound,
     setSolveModalOpen,
     resetGame,
+    concludeRound,
   } = useGameStore();
+
 
   const [copied, setCopied] = useState(false);
 
@@ -160,8 +162,21 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
           )}
         </div>
 
-        {/* Right: Actions (Solve Button, Rules, Sound, Reset) */}
+        {/* Right: Actions (Solve Button, Conclude Round, Rules, Sound, Reset) */}
         <div className="flex items-center gap-2">
+          {/* Conclude Round Button (Active during discussion) */}
+          {isDayPhase && (
+            <button
+              type="button"
+              onClick={concludeRound}
+              title="Chủ động kết thúc sớm thời gian thảo luận để chuyển sang vòng tiếp theo"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-500/20 border border-emerald-500/30"
+            >
+              <FastForward className="w-3.5 h-3.5" />
+              <span>Kết Luận ({gameState.currentRound < 3 ? `Qua Vòng ${gameState.currentRound + 1}` : "Hết Giờ"})</span>
+            </button>
+          )}
+
           {/* Solve the Crime Button */}
           {isDayPhase && (
             <button
@@ -178,6 +193,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
               <span>{canSolve ? "Phá Án" : "Hết Huy Hiệu"}</span>
             </button>
           )}
+
 
           {/* Rules Guide Button */}
           <button

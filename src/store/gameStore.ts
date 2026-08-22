@@ -25,6 +25,7 @@ interface GameStore {
   startGame: () => void;
   skipBriefing: () => void;
   submitMurderSelection: (meansCardId: string, clueCardId: string) => void;
+  concludeRound: () => void;
 
   solveCrime: (suspectId: string, meansCardId: string, clueCardId: string) => void;
   submitWitnessKill: (targetId: string) => void;
@@ -188,6 +189,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       });
     }
   },
+
+  concludeRound: () => {
+    const { socket, gameState } = get();
+    if (socket && gameState) {
+      socket.emit("conclude_round", { roomId: gameState.roomId });
+    }
+  },
+
 
   solveCrime: (suspectId, meansCardId, clueCardId) => {
     const { socket, gameState } = get();

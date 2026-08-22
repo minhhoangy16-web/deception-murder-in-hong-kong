@@ -581,6 +581,25 @@ export class GameManager {
     return this.endGameWithWinner(roomId, "MURDERER", "Hết 3 vòng thảo luận mà Điều tra viên chưa phá được án. Hung thủ tẩu thoát thành công!");
   }
 
+  public async concludeRound(roomId: string, requesterId: string): Promise<GameState | undefined> {
+    const room = this.rooms.get(roomId);
+    if (!room || !room.phase.startsWith("DAY_ROUND_")) return undefined;
+
+    const requester = room.players.find(p => p.id === requesterId);
+    const requesterName = requester ? requester.name : "Người chơi";
+
+    room.logs.push({
+      id: "log_" + Date.now(),
+      type: "SYSTEM",
+      messageVi: `🔔 ${requesterName} đã bấm "KẾT LUẬN" - Kết thúc sớm thời gian thảo luận để chuyển sang vòng mới!`,
+      messageEn: `🔔 ${requesterName} clicked "CONCLUDE" - Ending discussion early and advancing to next round!`,
+      timestamp: Date.now(),
+    });
+
+    return await this.advanceRound(roomId);
+  }
+
+
   public solveCrime(
     roomId: string,
     solverId: string,
