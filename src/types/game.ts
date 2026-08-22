@@ -126,6 +126,8 @@ export interface GameState {
   forensicNotes?: ForensicNote[]; // AI explanation displayed at end game or logs
   logs: GameLogEntry[];
   currentTrack?: MusicTrack;
+  previousTrack?: MusicTrack;
   isBgmPlaying?: boolean;
 }
+
 

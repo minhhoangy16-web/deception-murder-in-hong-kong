@@ -108,10 +108,16 @@ export function setupSocketHandlers(io: SocketIOServer) {
       if (state) syncRoom(roomId);
     });
 
+    socket.on("revert_bgm_track", ({ roomId }) => {
+      const state = gameManager.revertToPreviousBgmTrack(roomId);
+      if (state) syncRoom(roomId);
+    });
+
     socket.on("toggle_bgm_playback", ({ roomId, isPlaying }) => {
       const state = gameManager.toggleBgmPlayback(roomId, isPlaying);
       if (state) syncRoom(roomId);
     });
+
 
     socket.on("trigger_sfx", ({ roomId, sfxType }) => {
       io.in(roomId).emit("play_sfx", { sfxType });

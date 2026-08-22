@@ -86,10 +86,28 @@ export class GameManager {
     const allTracks = bgmTracksData as MusicTrack[];
     const target = allTracks.find(t => t.id === trackId || t.youtubeId === trackId);
     if (target) {
+      if (target.phase === "SOLVE_CRIME" && room.currentTrack?.phase !== "SOLVE_CRIME") {
+        room.previousTrack = room.currentTrack;
+      }
       room.currentTrack = target;
       room.isBgmPlaying = isPlaying;
       this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
     }
+    return room;
+  }
+
+  public revertToPreviousBgmTrack(roomId: string): GameState | undefined {
+    const room = this.rooms.get(roomId);
+    if (!room) return undefined;
+
+    if (room.previousTrack) {
+      room.currentTrack = room.previousTrack;
+      room.previousTrack = undefined;
+    } else {
+      room.currentTrack = this.getRandomTrackForPhase(room.phase, room.currentRound);
+    }
+    room.isBgmPlaying = true;
+    this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
     return room;
   }
 
@@ -100,6 +118,7 @@ export class GameManager {
     this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
     return room;
   }
+
 
   public createRoom(hostId: string, hostName: string, settings?: Partial<RoomSettings>): GameState {
     const roomId = "HK-" + Math.floor(1000 + Math.random() * 9000);
@@ -763,10 +782,20 @@ export class GameManager {
       const remainingBadges = room.players.filter(p => p.hasBadge && p.role !== "MURDERER" && p.role !== "ACCOMPLICE");
       if (remainingBadges.length === 0) {
         this.endGameWithWinner(roomId, "MURDERER", "Tất cả các Điều tra viên đều đã sử dụng hết Huy hiệu phá án mà không tìm ra hung thủ!");
+      } else {
+        // Stop Cornered Pursuit track and restore previous in-game BGM track
+        if (room.previousTrack) {
+          room.currentTrack = room.previousTrack;
+          room.previousTrack = undefined;
+        } else {
+          room.currentTrack = this.getRandomTrackForPhase(room.phase, room.currentRound);
+        }
+        this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
       }
 
       return { success: true, isCorrect: false, state: room };
     }
+
   }
 
   public submitWitnessKill(roomId: string, murdererId: string, targetId: string): GameState | undefined {

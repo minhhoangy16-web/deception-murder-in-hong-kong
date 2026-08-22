@@ -317,18 +317,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   setSolveModalOpen: (open) => {
+    const { socket, gameState } = get();
     if (open) {
-      // When Solve modal opens, if host or in game, switch track to Pursuit ~ Cornered!
-      const { socket, gameState } = get();
+      // When Solve modal opens, switch room track to Pursuit ~ Cornered!
       if (socket && gameState) {
         socket.emit("change_bgm_track", {
           roomId: gameState.roomId,
           trackId: "solve_1",
         });
       }
+    } else {
+      // If modal is closed without winning or cancelled, revert to previous in-game BGM track
+      if (socket && gameState && gameState.currentTrack?.phase === "SOLVE_CRIME" && gameState.phase !== "GAME_OVER") {
+        socket.emit("revert_bgm_track", {
+          roomId: gameState.roomId,
+        });
+      }
     }
     set({ isSolveModalOpen: open });
   },
+
 
   setSelectedSuspectId: (id) => set({ selectedSuspectId: id }),
   setSelectedMeansId: (id) => set({ selectedMeansId: id }),
