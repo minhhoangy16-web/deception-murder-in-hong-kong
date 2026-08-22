@@ -99,6 +99,14 @@ export interface GameLogEntry {
   timestamp: number;
 }
 
+export interface MusicTrack {
+  id: string;
+  phase: "LOBBY" | "BRIEFING" | "ROUND_1_2" | "ROUND_3" | "SOLVE_CRIME";
+  title: string;
+  artist: string;
+  youtubeId: string;
+}
+
 export interface GameState {
   roomId: string;
   phase: GamePhase;
@@ -117,4 +125,7 @@ export interface GameState {
   assassinationTargetId?: string;
   forensicNotes?: ForensicNote[]; // AI explanation displayed at end game or logs
   logs: GameLogEntry[];
+  currentTrack?: MusicTrack;
+  isBgmPlaying?: boolean;
 }
+

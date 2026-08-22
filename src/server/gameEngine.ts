@@ -1,8 +1,10 @@
-import { Card, GamePhase, GameState, MurderSelection, Player, Role, RoomSettings, SceneTile, SolveAttempt } from "../types/game";
+import { Card, GamePhase, GameState, MurderSelection, Player, Role, RoomSettings, SceneTile, SolveAttempt, MusicTrack } from "../types/game";
 import meansData from "../data/means.json";
 import cluesData from "../data/clues.json";
 import sceneTilesData from "../data/sceneTiles.json";
+import bgmTracksData from "../data/bgmTracks.json";
 import { runAIForensicAnalysis } from "./aiForensicService";
+
 
 const AVATARS = [
   "senior_inspector",
@@ -48,6 +50,57 @@ export class GameManager {
     return this.rooms.get(roomId);
   }
 
+  public getTracksForPhase(phase: GamePhase, currentRound: number): MusicTrack[] {
+    const allTracks = bgmTracksData as MusicTrack[];
+    if (phase === "LOBBY") {
+      return allTracks.filter(t => t.phase === "LOBBY");
+    }
+    if (phase === "BRIEFING") {
+      return allTracks.filter(t => t.phase === "BRIEFING");
+    }
+    if (phase === "DAY_ROUND_3" || phase === "WITNESS_ASSASSINATION") {
+      return allTracks.filter(t => t.phase === "ROUND_3");
+    }
+    if (
+      phase === "NIGHT" ||
+      phase === "AI_ANALYZING" ||
+      phase === "DAY_ROUND_1" ||
+      phase === "DAY_ROUND_2" ||
+      phase === "ROUND_TRANSITION_2" ||
+      phase === "ROUND_TRANSITION_3"
+    ) {
+      return allTracks.filter(t => t.phase === "ROUND_1_2");
+    }
+    return allTracks.filter(t => t.phase === "LOBBY");
+  }
+
+  public getRandomTrackForPhase(phase: GamePhase, currentRound: number): MusicTrack {
+    const tracks = this.getTracksForPhase(phase, currentRound);
+    return tracks[Math.floor(Math.random() * tracks.length)] || (bgmTracksData as MusicTrack[])[0];
+  }
+
+  public setMusicTrack(roomId: string, trackId: string, isPlaying: boolean = true): GameState | undefined {
+    const room = this.rooms.get(roomId);
+    if (!room) return undefined;
+
+    const allTracks = bgmTracksData as MusicTrack[];
+    const target = allTracks.find(t => t.id === trackId || t.youtubeId === trackId);
+    if (target) {
+      room.currentTrack = target;
+      room.isBgmPlaying = isPlaying;
+      this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
+    }
+    return room;
+  }
+
+  public toggleBgmPlayback(roomId: string, isPlaying: boolean): GameState | undefined {
+    const room = this.rooms.get(roomId);
+    if (!room) return undefined;
+    room.isBgmPlaying = isPlaying;
+    this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
+    return room;
+  }
+
   public createRoom(hostId: string, hostName: string, settings?: Partial<RoomSettings>): GameState {
     const roomId = "HK-" + Math.floor(1000 + Math.random() * 9000);
     const defaultSettings: RoomSettings = {
@@ -73,6 +126,8 @@ export class GameManager {
       isOnline: true,
     };
 
+    const initialLobbyTrack = this.getRandomTrackForPhase("LOBBY", 1);
+
     const gameState: GameState = {
       roomId,
       phase: "LOBBY",
@@ -84,6 +139,8 @@ export class GameManager {
       tileDeck: [],
       discardedTiles: [],
       solveAttempts: [],
+      currentTrack: initialLobbyTrack,
+      isBgmPlaying: true,
       logs: [
         {
           id: "log_" + Date.now(),
@@ -98,6 +155,7 @@ export class GameManager {
     this.rooms.set(roomId, gameState);
     return gameState;
   }
+
 
   public joinRoom(roomId: string, playerId: string, playerName: string): { success: boolean; error?: string; state?: GameState } {
     const room = this.rooms.get(roomId);
@@ -235,6 +293,7 @@ export class GameManager {
     if (briefingSeconds > 0) {
       room.phase = "BRIEFING";
       room.roundTimeRemaining = briefingSeconds;
+      room.currentTrack = this.getRandomTrackForPhase("BRIEFING", 1);
 
       room.logs.push({
         id: "log_" + Date.now(),
@@ -247,6 +306,7 @@ export class GameManager {
       this.startBriefingTimer(roomId);
       return room;
     }
+
 
     return this.startNightPhase(roomId);
   }
@@ -307,6 +367,8 @@ export class GameManager {
 
     room.phase = "NIGHT";
     room.roundTimeRemaining = 0;
+    room.currentTrack = this.getRandomTrackForPhase("NIGHT", 1);
+
 
     room.logs.push({
       id: "log_" + Date.now(),
@@ -572,10 +634,14 @@ export class GameManager {
           timestamp: Date.now(),
         });
       }
+      room.phase = "DAY_ROUND_3";
+      room.roundTimeRemaining = room.settings.roundDurationSeconds || 90;
+      room.currentTrack = this.getRandomTrackForPhase("DAY_ROUND_3", 3);
       this.startRoundTimer(roomId);
       this.broadcast(roomId, "game_state_update", this.getSanitizedState(room));
       return room;
     }
+
 
     // If Round 3 ends without solution -> Murderer Wins
     return this.endGameWithWinner(roomId, "MURDERER", "Hết 3 vòng thảo luận mà Điều tra viên chưa phá được án. Hung thủ tẩu thoát thành công!");
@@ -764,7 +830,9 @@ export class GameManager {
     room.phase = "LOBBY";
     room.currentRound = 1;
     room.roundTimeRemaining = room.settings.roundDurationSeconds;
+    room.currentTrack = this.getRandomTrackForPhase("LOBBY", 1);
     room.activeTiles = [];
+
     room.tileDeck = [];
     room.discardedTiles = [];
     room.murderSelection = undefined;

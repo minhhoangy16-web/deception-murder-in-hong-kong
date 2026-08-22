@@ -103,10 +103,25 @@ export function setupSocketHandlers(io: SocketIOServer) {
       if (state) syncRoom(roomId);
     });
 
+    socket.on("change_bgm_track", ({ roomId, trackId }) => {
+      const state = gameManager.setMusicTrack(roomId, trackId);
+      if (state) syncRoom(roomId);
+    });
+
+    socket.on("toggle_bgm_playback", ({ roomId, isPlaying }) => {
+      const state = gameManager.toggleBgmPlayback(roomId, isPlaying);
+      if (state) syncRoom(roomId);
+    });
+
+    socket.on("trigger_sfx", ({ roomId, sfxType }) => {
+      io.in(roomId).emit("play_sfx", { sfxType });
+    });
+
     socket.on("reset_game", ({ roomId }) => {
       const state = gameManager.resetGameToLobby(roomId);
       if (state) syncRoom(roomId);
     });
+
 
     socket.on("disconnect", () => {
       console.log(`[Socket] Disconnected: ${socket.id}`);

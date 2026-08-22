@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { formatTime } from "../../lib/utils";
+import { MusicControlBar } from "../audio/MusicControlBar";
 import { Volume2, VolumeX, HelpCircle, Award, RotateCcw, Copy, Check, Clock, ShieldAlert, Shield, Eye, Search, FastForward } from "lucide-react";
+
 
 interface HeaderNavProps {
   onOpenRules: () => void;
@@ -195,6 +197,9 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
           )}
 
 
+          {/* Music Control Bar (Track info + Volume + Host song selector) */}
+          <MusicControlBar />
+
           {/* Rules Guide Button */}
           <button
             onClick={onOpenRules}
@@ -202,15 +207,6 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
             className="p-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-600 hover:text-stone-900 transition-colors shadow-sm"
           >
             <HelpCircle className="w-4 h-4" />
-          </button>
-
-          {/* Sound Toggle */}
-          <button
-            onClick={toggleSound}
-            title={isSoundMuted ? "Bật âm thanh" : "Tắt âm thanh"}
-            className="p-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-600 hover:text-stone-900 transition-colors shadow-sm"
-          >
-            {isSoundMuted ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-emerald-600" />}
           </button>
 
           {/* Host Reset Game */}
@@ -223,6 +219,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onOpenRules, onOpenRoleCar
               <RotateCcw className="w-4 h-4" />
             </button>
           )}
+
         </div>
       </div>
     </header>

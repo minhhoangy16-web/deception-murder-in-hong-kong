@@ -178,6 +178,76 @@ class SoundManager {
       osc.stop(now + idx * 0.15 + 0.45);
     });
   }
+
+  public playTakeThat() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const freqs = [523.25, 659.25, 783.99, 1046.5]; // C Major chord strike
+    
+    freqs.forEach((f) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(f, now);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    });
+
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subOsc.type = "triangle";
+    subOsc.frequency.setValueAtTime(150, now);
+    subOsc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+    subGain.gain.setValueAtTime(0.35, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.35);
+  }
+
+  public playObjection() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const dissonantFreqs = [311.13, 329.63, 440, 466.16];
+    
+    dissonantFreqs.forEach((f) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(f, now);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.6);
+    });
+
+    const buzzOsc = this.ctx.createOscillator();
+    const buzzGain = this.ctx.createGain();
+    buzzOsc.type = "square";
+    buzzOsc.frequency.setValueAtTime(130, now);
+    buzzGain.gain.setValueAtTime(0.3, now);
+    buzzGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    buzzOsc.connect(buzzGain);
+    buzzGain.connect(this.ctx.destination);
+    buzzOsc.start(now);
+    buzzOsc.stop(now + 0.5);
+  }
 }
 
 export const soundManager = new SoundManager();
+

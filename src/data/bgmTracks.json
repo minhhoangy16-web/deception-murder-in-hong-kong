@@ -1,0 +1,135 @@
+[
+  {
+    "id": "lobby_1",
+    "phase": "LOBBY",
+    "title": "Contemplating Time in the Rain (Shadows of Reflection)",
+    "artist": "Bohren & der Club of Gore",
+    "youtubeId": "1qZAb0_fGgM"
+  },
+  {
+    "id": "lobby_2",
+    "phase": "LOBBY",
+    "title": "Il Siracusano Lobby Theme",
+    "artist": "Arknights OST",
+    "youtubeId": "2XG6Q4eeM3k"
+  },
+  {
+    "id": "lobby_3",
+    "phase": "LOBBY",
+    "title": "Hong Kong Kowloon Theme",
+    "artist": "Sleeping Dogs Soundtrack",
+    "youtubeId": "rdGfBQai6CQ"
+  },
+  {
+    "id": "briefing_1",
+    "phase": "BRIEFING",
+    "title": "Final Prep Orders Theme (Gacha Menu)",
+    "artist": "Arknights: Endfield 1.0",
+    "youtubeId": "1a9tjo-Lx1A"
+  },
+  {
+    "id": "briefing_2",
+    "phase": "BRIEFING",
+    "title": "Modus Operandi (Laboratory)",
+    "artist": "CSI NCIS Laboratory Music",
+    "youtubeId": "O274b1asDvw"
+  },
+  {
+    "id": "briefing_3",
+    "phase": "BRIEFING",
+    "title": "Welcome Home, Wei Shen",
+    "artist": "Sleeping Dogs OST",
+    "youtubeId": "eQHpVz1TGDs"
+  },
+  {
+    "id": "briefing_4",
+    "phase": "BRIEFING",
+    "title": "Courtroom Lobby ~ Beginning Overture",
+    "artist": "Phoenix Wright: Ace Attorney",
+    "youtubeId": "h29zK6_VstU"
+  },
+  {
+    "id": "round_1_1",
+    "phase": "ROUND_1_2",
+    "title": "Seeking The Truth (Remastered)",
+    "artist": "Suspense Music",
+    "youtubeId": "hoqMpJC0tZY"
+  },
+  {
+    "id": "round_1_2",
+    "phase": "ROUND_1_2",
+    "title": "The Mystery Unfolds",
+    "artist": "SUSPENSE MUSIC",
+    "youtubeId": "ypu05mpxHa0"
+  },
+  {
+    "id": "round_1_3",
+    "phase": "ROUND_1_2",
+    "title": "Looking For Trouble (Action & Dramatic)",
+    "artist": "Suspense Action & Epic Music",
+    "youtubeId": "Rkm_gktmlhA"
+  },
+  {
+    "id": "round_1_4",
+    "phase": "ROUND_1_2",
+    "title": "Crime Scene Investigation",
+    "artist": "CSI NCIS Laboratory Music",
+    "youtubeId": "UofTNDGPlXk"
+  },
+  {
+    "id": "round_1_5",
+    "phase": "ROUND_1_2",
+    "title": "Body of the Crime",
+    "artist": "Crime Background Music",
+    "youtubeId": "Y0-dLgK02vM"
+  },
+  {
+    "id": "round_1_6",
+    "phase": "ROUND_1_2",
+    "title": "Mystic Force",
+    "artist": "Kevin MacLeod",
+    "youtubeId": "pfryxqYSHqA"
+  },
+  {
+    "id": "round_1_7",
+    "phase": "ROUND_1_2",
+    "title": "The First Turnabout",
+    "artist": "Phoenix Wright: Ace Attorney",
+    "youtubeId": "cpCdm7ZGrfA"
+  },
+  {
+    "id": "round_3_1",
+    "phase": "ROUND_3",
+    "title": "Survive The Game (Survive The Truth)",
+    "artist": "SUSPENSE MUSIC",
+    "youtubeId": "h-Gyf4KUcwU"
+  },
+  {
+    "id": "round_3_2",
+    "phase": "ROUND_3",
+    "title": "Questioning ~ Moderato 2001",
+    "artist": "Phoenix Wright: Ace Attorney",
+    "youtubeId": "9_sAzyTCZzQ"
+  },
+  {
+    "id": "round_3_3",
+    "phase": "ROUND_3",
+    "title": "indust",
+    "artist": "Arknights OST",
+    "youtubeId": "c7FcikGCkHA"
+  },
+  {
+    "id": "solve_1",
+    "phase": "SOLVE_CRIME",
+    "title": "Pressing Pursuit ~ Cornered",
+    "artist": "Phoenix Wright: Ace Attorney",
+    "youtubeId": "UxnvGDK0WGM"
+  },
+  {
+    "id": "solve_2",
+    "phase": "SOLVE_CRIME",
+    "title": "Pressing Pursuit ~ Cornered (Variation)",
+    "artist": "Phoenix Wright: Ace Attorney",
+    "youtubeId": "lAWdWk6a2gg"
+  }
+]

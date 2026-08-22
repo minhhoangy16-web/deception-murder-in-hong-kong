@@ -14,7 +14,9 @@ import { RulesModal } from "../components/game/RulesModal";
 import { RoleCardRevealModal } from "../components/game/RoleCardRevealModal";
 import { GameChatLog } from "../components/game/GameChatLog";
 import { BotController } from "../components/game/BotController";
+import { YouTubeAudioPlayer } from "../components/audio/YouTubeAudioPlayer";
 import { AlertCircle, Award, Sparkles } from "lucide-react";
+
 
 export default function Home() {
   const {
@@ -66,8 +68,10 @@ export default function Home() {
           </div>
         )}
         <LobbyView />
+        <YouTubeAudioPlayer />
       </main>
     );
+
   }
 
   const isBriefing = gameState.phase === "BRIEFING";
@@ -219,6 +223,8 @@ export default function Home() {
       <GameOverModal />
       <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
       <BotController />
+      <YouTubeAudioPlayer />
     </main>
   );
 }
+

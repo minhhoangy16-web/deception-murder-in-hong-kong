@@ -10,6 +10,7 @@ interface GameStore {
   myPlayerId: string | null;
   errorMessage: string | null;
   isSoundMuted: boolean;
+  bgmVolume: number; // 0 to 100
   
   // Accusation modal state
   isSolveModalOpen: boolean;
@@ -33,12 +34,27 @@ interface GameStore {
   updateSettings: (settings: Partial<RoomSettings>) => void;
   resetGame: () => void;
   toggleSound: () => void;
+  setBgmVolume: (volume: number) => void;
+  changeBgmTrack: (trackId: string) => void;
+  toggleBgmPlayback: (isPlaying: boolean) => void;
+  triggerSfx: (sfxType: string) => void;
   setSolveModalOpen: (open: boolean) => void;
   setSelectedSuspectId: (id: string | null) => void;
   setSelectedMeansId: (id: string | null) => void;
   setSelectedClueId: (id: string | null) => void;
   clearError: () => void;
 }
+
+const getInitialVolume = (): number => {
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem("deception_bgm_volume");
+    if (saved !== null) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) return parsed;
+    }
+  }
+  return 45;
+};
 
 export const useGameStore = create<GameStore>((set, get) => ({
   socket: null,
@@ -47,6 +63,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   myPlayerId: null,
   errorMessage: null,
   isSoundMuted: false,
+  bgmVolume: getInitialVolume(),
 
   isSolveModalOpen: false,
   selectedSuspectId: null,
@@ -122,12 +139,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     });
 
+    socketInstance.on("play_sfx", ({ sfxType }: { sfxType: string }) => {
+      if (sfxType === "take_that") {
+        soundManager.playTakeThat();
+      } else if (sfxType === "objection") {
+        soundManager.playObjection();
+      }
+    });
 
     socketInstance.on("solve_result", ({ isCorrect }) => {
       if (isCorrect) {
-        soundManager.playBadgeSlam();
+        soundManager.playTakeThat();
       } else {
-        soundManager.playAlert();
+        soundManager.playObjection();
       }
     });
 
@@ -178,7 +202,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-
   submitMurderSelection: (meansCardId, clueCardId) => {
     const { socket, gameState } = get();
     if (socket && gameState) {
@@ -197,10 +220,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-
   solveCrime: (suspectId, meansCardId, clueCardId) => {
     const { socket, gameState } = get();
     if (socket && gameState) {
+      // Trigger Take That dramatic cue on solve attempt
+      soundManager.playTakeThat();
       socket.emit("solve_crime", {
         roomId: gameState.roomId,
         suspectId,
@@ -254,7 +278,58 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ isSoundMuted: !current });
   },
 
-  setSolveModalOpen: (open) => set({ isSolveModalOpen: open }),
+  setBgmVolume: (volume) => {
+    const clamped = Math.max(0, Math.min(100, volume));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("deception_bgm_volume", clamped.toString());
+    }
+    set({ bgmVolume: clamped });
+  },
+
+  changeBgmTrack: (trackId) => {
+    const { socket, gameState } = get();
+    if (socket && gameState) {
+      socket.emit("change_bgm_track", {
+        roomId: gameState.roomId,
+        trackId,
+      });
+    }
+  },
+
+  toggleBgmPlayback: (isPlaying) => {
+    const { socket, gameState } = get();
+    if (socket && gameState) {
+      socket.emit("toggle_bgm_playback", {
+        roomId: gameState.roomId,
+        isPlaying,
+      });
+    }
+  },
+
+  triggerSfx: (sfxType) => {
+    const { socket, gameState } = get();
+    if (socket && gameState) {
+      socket.emit("trigger_sfx", {
+        roomId: gameState.roomId,
+        sfxType,
+      });
+    }
+  },
+
+  setSolveModalOpen: (open) => {
+    if (open) {
+      // When Solve modal opens, if host or in game, switch track to Pursuit ~ Cornered!
+      const { socket, gameState } = get();
+      if (socket && gameState) {
+        socket.emit("change_bgm_track", {
+          roomId: gameState.roomId,
+          trackId: "solve_1",
+        });
+      }
+    }
+    set({ isSolveModalOpen: open });
+  },
+
   setSelectedSuspectId: (id) => set({ selectedSuspectId: id }),
   setSelectedMeansId: (id) => set({ selectedMeansId: id }),
   setSelectedClueId: (id) => set({ selectedClueId: id }),

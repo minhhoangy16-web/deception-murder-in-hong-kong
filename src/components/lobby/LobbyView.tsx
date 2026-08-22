@@ -3,7 +3,9 @@ import { useGameStore } from "../../store/gameStore";
 import { SettingsModal } from "./SettingsModal";
 import { QRCodeModal } from "./QRCodeModal";
 import { CharacterAvatar } from "../game/CharacterAvatar";
+import { MusicControlBar } from "../audio/MusicControlBar";
 import { Copy, Plus, Play, Settings, Users, Sparkles, AlertCircle, ShieldAlert, Check, Share2, QrCode } from "lucide-react";
+
 
 
 export const LobbyView: React.FC = () => {
@@ -216,7 +218,9 @@ export const LobbyView: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <MusicControlBar />
+
           <button
             type="button"
             onClick={() => setIsSettingsOpen(true)}
@@ -238,6 +242,7 @@ export const LobbyView: React.FC = () => {
           )}
         </div>
       </div>
+
 
       {/* Players List Grid */}
       <div className="desk-panel p-6 sm:p-7 rounded-3xl space-y-4">
