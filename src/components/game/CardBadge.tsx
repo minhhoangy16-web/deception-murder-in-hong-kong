@@ -78,6 +78,7 @@ export const CardBadge: React.FC<CardBadgeProps> = ({
           <CardIllustration
             cardId={card.id}
             cardNameEn={card.nameEn}
+            cardNameVi={card.nameVi}
             type={type}
           />
         </div>
