@@ -5,26 +5,68 @@
     "titleEn": "Cause of Death",
     "type": "CAUSE_OF_DEATH",
     "options": [
-      { "index": 0, "labelVi": "Nghẹt Thở / Tắc Khí", "labelEn": "Suffocation" },
-      { "index": 1, "labelVi": "Mất Máu Trầm Trọng", "labelEn": "Severe Loss of Blood" },
-      { "index": 2, "labelVi": "Trúng Độc Tức Thì", "labelEn": "Poisoning" },
-      { "index": 3, "labelVi": "Chấn Thương Nặng", "labelEn": "Severe Injury / Trauma" },
-      { "index": 4, "labelVi": "Điện Giật / Bỏng Nặng", "labelEn": "Electrocution / Burn" },
-      { "index": 5, "labelVi": "Bệnh Lý Bất Ngờ / Sốc", "labelEn": "Sudden Illness / Shock" }
+      { "index": 0, "labelVi": "Ngạt Thở", "labelEn": "Suffocation" },
+      { "index": 1, "labelVi": "Chấn Thương Nặng", "labelEn": "Severe Injury" },
+      { "index": 2, "labelVi": "Mất Máu", "labelEn": "Loss of Blood" },
+      { "index": 3, "labelVi": "Bệnh Tật", "labelEn": "Illness / Disease" },
+      { "index": 4, "labelVi": "Tẩm Độc", "labelEn": "Poisoning" },
+      { "index": 5, "labelVi": "Tai Nạn", "labelEn": "Accident" }
     ]
   },
   {
-    "id": "tile_location",
-    "titleVi": "Hiện Trường Vụ Án",
-    "titleEn": "Location of Crime",
+    "id": "tile_location_indoor",
+    "titleVi": "Hiện Trường (Trong Nhà)",
+    "titleEn": "Location (Indoor)",
     "type": "LOCATION",
     "options": [
-      { "index": 0, "labelVi": "Phòng Khách / Nhà Riêng", "labelEn": "Living Room / Residence" },
-      { "index": 1, "labelVi": "Khách Sạn / Quán Bar", "labelEn": "Hotel / Bar" },
-      { "index": 2, "labelVi": "Bếp Ăn / Nhà Hàng", "labelEn": "Kitchen / Restaurant" },
-      { "index": 3, "labelVi": "Bờ Biển / Bến Tàu", "labelEn": "Seashore / Harbor" },
-      { "index": 4, "labelVi": "Rừng Cây / Công Viên", "labelEn": "Forest / Public Park" },
-      { "index": 5, "labelVi": "Công Trường / Hẻm Vắng", "labelEn": "Construction / Dark Alley" }
+      { "index": 0, "labelVi": "Quán Rượu", "labelEn": "Pub" },
+      { "index": 1, "labelVi": "Nhà Sách", "labelEn": "Bookstore" },
+      { "index": 2, "labelVi": "Nhà Hàng", "labelEn": "Restaurant" },
+      { "index": 3, "labelVi": "Khách Sạn", "labelEn": "Hotel" },
+      { "index": 4, "labelVi": "Bệnh Viện", "labelEn": "Hospital" },
+      { "index": 5, "labelVi": "Khu Thi Công", "labelEn": "Building Site" }
+    ]
+  },
+  {
+    "id": "tile_location_home",
+    "titleVi": "Hiện Trường (Sinh Hoạt)",
+    "titleEn": "Location (Home)",
+    "type": "LOCATION",
+    "options": [
+      { "index": 0, "labelVi": "Phòng Khách", "labelEn": "Living Room" },
+      { "index": 1, "labelVi": "Phòng Ngủ", "labelEn": "Bedroom" },
+      { "index": 2, "labelVi": "Nhà Bếp", "labelEn": "Kitchen" },
+      { "index": 3, "labelVi": "Nhà Tắm", "labelEn": "Bathroom" },
+      { "index": 4, "labelVi": "Ban Công", "labelEn": "Balcony" },
+      { "index": 5, "labelVi": "Tầng Hầm", "labelEn": "Basement" }
+    ]
+  },
+  {
+    "id": "tile_location_outdoor",
+    "titleVi": "Hiện Trường (Ngoài Trời)",
+    "titleEn": "Location (Outdoor)",
+    "type": "LOCATION",
+    "options": [
+      { "index": 0, "labelVi": "Công Viên", "labelEn": "Park" },
+      { "index": 1, "labelVi": "Đường Phố", "labelEn": "Street" },
+      { "index": 2, "labelVi": "Rừng Rậm", "labelEn": "Forest" },
+      { "index": 3, "labelVi": "Bờ Biển", "labelEn": "Seashore" },
+      { "index": 4, "labelVi": "Trường Học", "labelEn": "School" },
+      { "index": 5, "labelVi": "Nhà Ga", "labelEn": "Train Station" }
+    ]
+  },
+  {
+    "id": "tile_victim_expression",
+    "titleVi": "Biểu Cảm Của Nạn Nhân",
+    "titleEn": "Victim's Expression",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Thanh Thản", "labelEn": "Peaceful" },
+      { "index": 1, "labelVi": "Chật Vật", "labelEn": "Struggling" },
+      { "index": 2, "labelVi": "Hãi Hùng", "labelEn": "Frightened" },
+      { "index": 3, "labelVi": "Đau Đớn", "labelEn": "Pain" },
+      { "index": 4, "labelVi": "Không Biểu Cảm", "labelEn": "Blank" },
+      { "index": 5, "labelVi": "Giận Dữ", "labelEn": "Furious" }
     ]
   },
   {
@@ -33,180 +75,236 @@
     "titleEn": "Victim's State",
     "type": "EVENT",
     "options": [
-      { "index": 0, "labelVi": "Nguyên Vẹn / Bình Yên", "labelEn": "Intact / Peaceful" },
-      { "index": 1, "labelVi": "Vặn Vẹo / Co Quắp", "labelEn": "Twisted / Convulsed" },
-      { "index": 2, "labelVi": "Nhiều Vết Trầy Xước", "labelEn": "Scratches / Bruises" },
-      { "index": 3, "labelVi": "Bị Trói Buộc Chặt", "labelEn": "Tied Up / Bound" },
-      { "index": 4, "labelVi": "Ướt Sũng Nước", "labelEn": "Soaked in Water" },
-      { "index": 5, "labelVi": "Cháy Xém / Bỏng Đỏ", "labelEn": "Charred / Burned" }
+      { "index": 0, "labelVi": "Chỉnh Tề", "labelEn": "Intact" },
+      { "index": 1, "labelVi": "Rách Rưới", "labelEn": "Torn" },
+      { "index": 2, "labelVi": "Chật Vật Giằng Co", "labelEn": "Struggled" },
+      { "index": 3, "labelVi": "Bị Che Đậy", "labelEn": "Covered" },
+      { "index": 4, "labelVi": "Bị Trói", "labelEn": "Bound" },
+      { "index": 5, "labelVi": "Đang Ngủ", "labelEn": "Sleeping" }
     ]
   },
   {
-    "id": "tile_weather",
-    "titleVi": "Thời Tiết Lúc Xảy Ra",
-    "titleEn": "Weather at Crime",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Mưa Bão Dữ Dội", "labelEn": "Stormy Rain" },
-      { "index": 1, "labelVi": "Nắng Gắt Oi Ả", "labelEn": "Scorching Sun" },
-      { "index": 2, "labelVi": "Sương Mù Dày Đặc", "labelEn": "Dense Fog" },
-      { "index": 3, "labelVi": "Gió Lạnh Buốt Giá", "labelEn": "Freezing Wind" },
-      { "index": 4, "labelVi": "Trời Trong Trăng Sáng", "labelEn": "Clear Moonlit Night" },
-      { "index": 5, "labelVi": "Độ Ẩm Cao Ngột Ngạt", "labelEn": "Humid & Sultry" }
-    ]
-  },
-  {
-    "id": "tile_evidence_left",
-    "titleVi": "Dấu Vết Để Lại",
-    "titleEn": "Evidence Left Behind",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Dấu Vết Sinh Học", "labelEn": "Biological Traces" },
-      { "index": 1, "labelVi": "Mùi Hương Lạ Kì", "labelEn": "Peculiar Scent" },
-      { "index": 2, "labelVi": "Vết Bẩn / Chất Lỏng", "labelEn": "Stains / Fluid" },
-      { "index": 3, "labelVi": "Dấu Vết Đập Phá", "labelEn": "Damaged Objects" },
-      { "index": 4, "labelVi": "Mẩu Giấy / Tài Liệu", "labelEn": "Paper / Documents" },
-      { "index": 5, "labelVi": "Không Để Lại Gì Rõ Ràng", "labelEn": "Clean / Concealed" }
-    ]
-  },
-  {
-    "id": "tile_motive",
-    "titleVi": "Động Cơ Gây Án",
-    "titleEn": "Motive of Crime",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Thù Hằn Cá Nhân", "labelEn": "Personal Hatred" },
-      { "index": 1, "labelVi": "Tiền Bạc & Lợi Ích", "labelEn": "Money & Wealth" },
-      { "index": 2, "labelVi": "Tình Ái Ghen Tuông", "labelEn": "Jealousy / Romance" },
-      { "index": 3, "labelVi": "Bịt Miệng / Che Giấu Bí Mật", "labelEn": "Silencing a Secret" },
-      { "index": 4, "labelVi": "Bột Phát / Mất Kiểm Soát", "labelEn": "Sudden Rage / Spontaneous" },
-      { "index": 5, "labelVi": "Thanh Trừng Quyền Lực", "labelEn": "Power Struggle" }
-    ]
-  },
-  {
-    "id": "tile_social_relationship",
-    "titleVi": "Mối Quan Hệ Xã Hội",
-    "titleEn": "Social Relationship",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Người Thân Trong Gia Đình", "labelEn": "Family Relative" },
-      { "index": 1, "labelVi": "Đồng Nghiệp / Đối Tác", "labelEn": "Colleague / Partner" },
-      { "index": 2, "labelVi": "Bạn Bè Lâu Năm", "labelEn": "Longtime Friend" },
-      { "index": 3, "labelVi": "Tình Nhân Bí Mật", "labelEn": "Secret Lover" },
-      { "index": 4, "labelVi": "Kẻ Thù Truyền Kiếp", "labelEn": "Sworn Enemy" },
-      { "index": 5, "labelVi": "Người Lạ Hoàn Toàn", "labelEn": "Complete Stranger" }
-    ]
-  },
-  {
-    "id": "tile_duration",
-    "titleVi": "Thời Gian Gây Án",
-    "titleEn": "Duration of Crime",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Chớp Nhoáng Vài Giây", "labelEn": "Instantaneous (Seconds)" },
-      { "index": 1, "labelVi": "Ngắn (Vài Phút)", "labelEn": "Brief (A few minutes)" },
-      { "index": 2, "labelVi": "Kéo Dài Nửa Tiếng", "labelEn": "Prolonged (Half hour)" },
-      { "index": 3, "labelVi": "Dằng Dặc Nhiều Giờ", "labelEn": "Several Hours" },
-      { "index": 4, "labelVi": "Xuyên Đêm Đến Rạng Sáng", "labelEn": "Overnight to Dawn" },
-      { "index": 5, "labelVi": "Có Tính Toán Trước Vài Ngày", "labelEn": "Planned Over Days" }
-    ]
-  },
-  {
-    "id": "tile_smell",
-    "titleVi": "Mùi Hương Tại Hiện Trường",
-    "titleEn": "Smell at Scene",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Mùi Thuốc Khói / Khét", "labelEn": "Smoke / Burnt" },
-      { "index": 1, "labelVi": "Mùi Nước Hoa / Phấn Thơm", "labelEn": "Perfume / Floral" },
-      { "index": 2, "labelVi": "Mùi Rượu / Bia Lên Men", "labelEn": "Alcohol / Brewery" },
-      { "index": 3, "labelVi": "Mùi Hóa Chất / Thuốc Khử Trùng", "labelEn": "Chemical / Disinfectant" },
-      { "index": 4, "labelVi": "Mùi Ẩm Mốc / Đất Tanh", "labelEn": "Moldy / Damp Earth" },
-      { "index": 5, "labelVi": "Hoàn Toàn Không Mùi", "labelEn": "Odorless" }
-    ]
-  },
-  {
-    "id": "tile_sound",
-    "titleVi": "Âm Thanh Trước Khi Tử Vong",
-    "titleEn": "Sudden Sound",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Tiếng Nổ Đinh Tai", "labelEn": "Loud Bang / Gunshot" },
-      { "index": 1, "labelVi": "Tiếng La Hét Thất Thanh", "labelEn": "Terrified Scream" },
-      { "index": 2, "labelVi": "Tiếng Đổ Vỡ Keng", "labelEn": "Crashing Glass" },
-      { "index": 3, "labelVi": "Tiếng Xì Xào Tranh Cãi", "labelEn": "Whispered Argument" },
-      { "index": 4, "labelVi": "Tiếng Bước Chân Dồn Dập", "labelEn": "Frantic Footsteps" },
-      { "index": 5, "labelVi": "Hoàn Toàn Tĩnh Lặng", "labelEn": "Dead Silence" }
-    ]
-  },
-  {
-    "id": "tile_corpse_expression",
-    "titleVi": "Nét Mặt Nạn Nhân",
-    "titleEn": "Expression on Corpse",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Kinh Hoàng Tột Độ", "labelEn": "Extreme Terror" },
-      { "index": 1, "labelVi": "Tức Giận Dữ Tội", "labelEn": "Furious Anger" },
-      { "index": 2, "labelVi": "Bình Thản Thanh Thản", "labelEn": "Calm & Serene" },
-      { "index": 3, "labelVi": "Bàng Hoàng Kinh Ngạc", "labelEn": "Shocked & Stunned" },
-      { "index": 4, "labelVi": "Đau Đớn Oằn Oại", "labelEn": "Agonized Pain" },
-      { "index": 5, "labelVi": "Mơ Hồ Không Cảm Xúc", "labelEn": "Blank / Indifferent" }
-    ]
-  },
-  {
-    "id": "tile_victim_clothing",
-    "titleVi": "Trang Phục Nạn Nhân",
+    "id": "tile_victim_clothes",
+    "titleVi": "Quần Áo Của Nạn Nhân",
     "titleEn": "Victim's Clothes",
     "type": "EVENT",
     "options": [
-      { "index": 0, "labelVi": "Lộng Lẫy Sang Trọng", "labelEn": "Glamorous / Formal" },
-      { "index": 1, "labelVi": "Đồ Ở Nhà / Đồ Ngủ", "labelEn": "Pajamas / Casual" },
-      { "index": 2, "labelVi": "Trang Phục Đi Làm / Suit", "labelEn": "Business Suit" },
-      { "index": 3, "labelVi": "Rách Rưới / Xộc Xệch", "labelEn": "Torn & Disheveled" },
-      { "index": 4, "labelVi": "Đồ Thể Thao Năng Động", "labelEn": "Sportswear" },
-      { "index": 5, "labelVi": "Trang Phục Dạ Hội Đen", "labelEn": "Dark Evening Wear" }
-    ]
-  },
-  {
-    "id": "tile_room_state",
-    "titleVi": "Tình Trạng Căn Phòng",
-    "titleEn": "State of the Room",
-    "type": "EVENT",
-    "options": [
-      { "index": 0, "labelVi": "Gọn Gàng Ngăn Nắp", "labelEn": "Neat and Orderly" },
-      { "index": 1, "labelVi": "Hỗn Loạn Đảo Lộn", "labelEn": "Utter Chaos / Ransacked" },
-      { "index": 2, "labelVi": "Khóa Cửa Trái Kín Mít", "labelEn": "Locked from Inside" },
-      { "index": 3, "labelVi": "Cửa Sổ Mở Toang", "labelEn": "Open Window" },
-      { "index": 4, "labelVi": "Tối Đen Mịt Mù", "labelEn": "Pitch Black" },
-      { "index": 5, "labelVi": "Ánh Đèn Chập Chờn", "labelEn": "Flickering Lights" }
+      { "index": 0, "labelVi": "Gọn Gàng", "labelEn": "Neat" },
+      { "index": 1, "labelVi": "Bẩn Thỉu", "labelEn": "Dirty" },
+      { "index": 2, "labelVi": "Rách Nát", "labelEn": "Tattered" },
+      { "index": 3, "labelVi": "Kỳ Dị", "labelEn": "Bizarre" },
+      { "index": 4, "labelVi": "Không Mặc Đồ", "labelEn": "Naked" },
+      { "index": 5, "labelVi": "Sang Trọng", "labelEn": "Formal" }
     ]
   },
   {
     "id": "tile_general_impression",
-    "titleVi": "Ấn Tượng Tổng Thể",
+    "titleVi": "Ấn Tượng Chung",
     "titleEn": "General Impression",
     "type": "EVENT",
     "options": [
-      { "index": 0, "labelVi": "Chuyên Nghiệp Máu Lạnh", "labelEn": "Cold & Professional" },
-      { "index": 1, "labelVi": "Vụng Về Nghiệp Dư", "labelEn": "Clumsy & Amateur" },
-      { "index": 2, "labelVi": "Bí Ẩn Kì Quặc", "labelEn": "Bizarre & Occult" },
-      { "index": 3, "labelVi": "Hung Bạo Tàn Nhẫn", "labelEn": "Brutal & Savage" },
-      { "index": 4, "labelVi": "Thanh Lịch Tinh Tế", "labelEn": "Subtle & Elegant" },
-      { "index": 5, "labelVi": "Nghệ Thuật Kịch Tính", "labelEn": "Dramatic & Theatrical" }
+      { "index": 0, "labelVi": "Bình Thường", "labelEn": "Common" },
+      { "index": 1, "labelVi": "Sáng Tạo", "labelEn": "Creative" },
+      { "index": 2, "labelVi": "Đáng Khả Nghi", "labelEn": "Suspicious" },
+      { "index": 3, "labelVi": "Ác Độc", "labelEn": "Cruel" },
+      { "index": 4, "labelVi": "Tồi Tệ", "labelEn": "Horrible" },
+      { "index": 5, "labelVi": "Kịch Tính", "labelEn": "Dramatic" }
     ]
   },
   {
-    "id": "tile_day_time",
-    "titleVi": "Thời Điểm Trong Ngày",
-    "titleEn": "Time of Day",
+    "id": "tile_sudden_incident",
+    "titleVi": "Tai Nạn Bất Ngờ",
+    "titleEn": "Sudden Incident",
     "type": "EVENT",
     "options": [
-      { "index": 0, "labelVi": "Sáng Sớm Tinh Mơ", "labelEn": "Early Morning" },
-      { "index": 1, "labelVi": "Buổi Trưa Nắng Chói", "labelEn": "High Noon" },
-      { "index": 2, "labelVi": "Hoàng Hôn Xế Chiều", "labelEn": "Twilight / Dusk" },
-      { "index": 3, "labelVi": "Đêm Muộn Tĩnh Mịch", "labelEn": "Late Night" },
-      { "index": 4, "labelVi": "Nửa Đêm Canh Ba", "labelEn": "Midnight" },
-      { "index": 5, "labelVi": "Giờ Cao Điểm Tấp Nập", "labelEn": "Rush Hour" }
+      { "index": 0, "labelVi": "Mất Điện", "labelEn": "Power Outage" },
+      { "index": 1, "labelVi": "Lửa", "labelEn": "Fire" },
+      { "index": 2, "labelVi": "Mâu Thuẫn", "labelEn": "Conflict" },
+      { "index": 3, "labelVi": "Mất Đồ Quý Giá", "labelEn": "Theft" },
+      { "index": 4, "labelVi": "Hét !", "labelEn": "Scream !" },
+      { "index": 5, "labelVi": "Không Có Gì", "labelEn": "Nothing" }
+    ]
+  },
+  {
+    "id": "tile_day_of_crime",
+    "titleVi": "Thời Điểm Gây Án",
+    "titleEn": "Day of Crime / Timing",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Trong Tuần", "labelEn": "Weekday" },
+      { "index": 1, "labelVi": "Cuối Tuần", "labelEn": "Weekend" },
+      { "index": 2, "labelVi": "Mùa Xuân", "labelEn": "Spring" },
+      { "index": 3, "labelVi": "Mùa Hạ", "labelEn": "Summer" },
+      { "index": 4, "labelVi": "Mùa Thu", "labelEn": "Autumn" },
+      { "index": 5, "labelVi": "Mùa Đông", "labelEn": "Winter" }
+    ]
+  },
+  {
+    "id": "tile_duration_of_crime",
+    "titleVi": "Thời Gian Diễn Ra",
+    "titleEn": "Duration of Crime",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Vài Giây", "labelEn": "Instantaneous" },
+      { "index": 1, "labelVi": "Vài Phút", "labelEn": "Brief" },
+      { "index": 2, "labelVi": "Kéo Dài Vài Tiếng", "labelEn": "A few hours" },
+      { "index": 3, "labelVi": "Ngấm Dần Nhiều Ngày", "labelEn": "Days" },
+      { "index": 4, "labelVi": "Lên Lịch Chuẩn Xác", "labelEn": "Planned" },
+      { "index": 5, "labelVi": "Không Xác Định", "labelEn": "Indefinite" }
+    ]
+  },
+  {
+    "id": "tile_weather_environment",
+    "titleVi": "Thời Tiết & Môi Trường",
+    "titleEn": "Weather & Environment",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Mưa To", "labelEn": "Heavy Rain" },
+      { "index": 1, "labelVi": "Nắng Gắt", "labelEn": "Scorching Sun" },
+      { "index": 2, "labelVi": "Sương Mù", "labelEn": "Dense Fog" },
+      { "index": 3, "labelVi": "Ẩm Ướt Bụi Bặm", "labelEn": "Humid / Dusty" },
+      { "index": 4, "labelVi": "Lạnh Buốt / Máy Lạnh", "labelEn": "Freezing / Air Conditioned" },
+      { "index": 5, "labelVi": "Tối Đen Như Mực", "labelEn": "Pitch Black" }
+    ]
+  },
+  {
+    "id": "tile_trace_left_behind",
+    "titleVi": "Dấu Vết Sót Lại",
+    "titleEn": "Trace Left Behind",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Chất Lỏng Tràn Đổ", "labelEn": "Spilled Liquid" },
+      { "index": 1, "labelVi": "Mùi Đặc Trưng / Khói", "labelEn": "Peculiar Scent / Smoke" },
+      { "index": 2, "labelVi": "Dấu Chân / Dấu Vân Tay", "labelEn": "Footprint / Fingerprint" },
+      { "index": 3, "labelVi": "Sợi Vải / Mảnh Đồ", "labelEn": "Fabric / Shreds" },
+      { "index": 4, "labelVi": "Vết Cháy Xém / Tàn Tro", "labelEn": "Burn / Ash" },
+      { "index": 5, "labelVi": "Không Có Dấu Vết", "labelEn": "No Trace" }
+    ]
+  },
+  {
+    "id": "tile_motive_of_crime",
+    "titleVi": "Động Cơ Gây Án",
+    "titleEn": "Motive of Crime",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Tiền Bạc / Nợ Nần", "labelEn": "Money / Debt" },
+      { "index": 1, "labelVi": "Ghen Tuông / Tình Ái", "labelEn": "Jealousy / Romance" },
+      { "index": 2, "labelVi": "Mối Thù Sâu Sắc", "labelEn": "Deep Hatred" },
+      { "index": 3, "labelVi": "Bịt Đầu Mối / Tống Tiền", "labelEn": "Silencing / Blackmail" },
+      { "index": 4, "labelVi": "Cơn Thịnh Nộ Bộc Phát", "labelEn": "Sudden Rage" },
+      { "index": 5, "labelVi": "Tranh Giành Quyền Lực", "labelEn": "Power Struggle" }
+    ]
+  },
+  {
+    "id": "tile_social_relationship",
+    "titleVi": "Mối Quan Hệ Với Nạn Nhân",
+    "titleEn": "Social Relationship",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Người Yêu / Vợ Chồng", "labelEn": "Lover / Spouse" },
+      { "index": 1, "labelVi": "Bạn Bè / Đồng Nghiệp", "labelEn": "Friend / Colleague" },
+      { "index": 2, "labelVi": "Đối Tác / Đối Thủ", "labelEn": "Partner / Rival" },
+      { "index": 3, "labelVi": "Gia Đình / Người Thân", "labelEn": "Family Relative" },
+      { "index": 4, "labelVi": "Người Lạ / Mới Quen", "labelEn": "Stranger" },
+      { "index": 5, "labelVi": "Cấp Trên / Cấp Dưới", "labelEn": "Superior / Subordinate" }
+    ]
+  },
+  {
+    "id": "tile_scene_smell",
+    "titleVi": "Mùi Hương Hiện Trường",
+    "titleEn": "Scene Smell / Odor",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Nước Hoa", "labelEn": "Perfume" },
+      { "index": 1, "labelVi": "Hóa Chất", "labelEn": "Chemical" },
+      { "index": 2, "labelVi": "Ẩm Mốc / Thối Rữa", "labelEn": "Moldy / Rotten" },
+      { "index": 3, "labelVi": "Mùi Rượu Bia", "labelEn": "Alcohol" },
+      { "index": 4, "labelVi": "Khói Thuốc Lá", "labelEn": "Cigarette Smoke" },
+      { "index": 5, "labelVi": "Không Mùi", "labelEn": "Odorless" }
+    ]
+  },
+  {
+    "id": "tile_sound_heard",
+    "titleVi": "Âm Thanh Phát Ra",
+    "titleEn": "Sound Heard",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Tiếng Nổ Lớn", "labelEn": "Loud Bang" },
+      { "index": 1, "labelVi": "Tiếng Rên Rỉ", "labelEn": "Groaning" },
+      { "index": 2, "labelVi": "Tiếng Bước Chân", "labelEn": "Footsteps" },
+      { "index": 3, "labelVi": "Tiếng Kính Vỡ", "labelEn": "Breaking Glass" },
+      { "index": 4, "labelVi": "Tiếng Âm Nhạc", "labelEn": "Music" },
+      { "index": 5, "labelVi": "Im Bặt Hoàn Toàn", "labelEn": "Dead Silence" }
+    ]
+  },
+  {
+    "id": "tile_victim_occupation",
+    "titleVi": "Nghề Nghiệp Nạn Nhân",
+    "titleEn": "Victim's Occupation",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Học Sinh / Sinh Viên", "labelEn": "Student" },
+      { "index": 1, "labelVi": "Thượng Lưu / Doanh Nhân", "labelEn": "High Society / Business" },
+      { "index": 2, "labelVi": "Nhân Viên Văn Phòng", "labelEn": "Office Worker" },
+      { "index": 3, "labelVi": "Lao Động Chân Tay", "labelEn": "Blue Collar" },
+      { "index": 4, "labelVi": "Nghệ Thuật / Giải Trí", "labelEn": "Artist / Entertainment" },
+      { "index": 5, "labelVi": "Người Già / Thất Nghiệp", "labelEn": "Retired / Unemployed" }
+    ]
+  },
+  {
+    "id": "tile_state_of_scene",
+    "titleVi": "Tình Trạng Hiện Trường",
+    "titleEn": "State of the Scene",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Xáo Trộn Hỗn Loạn", "labelEn": "Utter Chaos" },
+      { "index": 1, "labelVi": "Ngăn Nắp Sạch Sẽ", "labelEn": "Neat & Clean" },
+      { "index": 2, "labelVi": "Bị Thiêu Rụi", "labelEn": "Burned" },
+      { "index": 3, "labelVi": "Ướt Sũng", "labelEn": "Soaked" },
+      { "index": 4, "labelVi": "Bị Phá Khóa", "labelEn": "Broken Lock" },
+      { "index": 5, "labelVi": "Tự Nhiên Như Bình Thường", "labelEn": "Natural" }
+    ]
+  },
+  {
+    "id": "tile_supporting_tool",
+    "titleVi": "Dụng Cụ Phụ Trợ",
+    "titleEn": "Supporting Tool",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Găng Tay", "labelEn": "Gloves" },
+      { "index": 1, "labelVi": "Băng Dính", "labelEn": "Duct Tape" },
+      { "index": 2, "labelVi": "Túi Chứa", "labelEn": "Container / Bag" },
+      { "index": 3, "labelVi": "Phương Tiện Vận Chuyển", "labelEn": "Vehicle" },
+      { "index": 4, "labelVi": "Dụng Cụ Mở Khóa", "labelEn": "Lockpick" },
+      { "index": 5, "labelVi": "Không Có", "labelEn": "None" }
+    ]
+  },
+  {
+    "id": "tile_biological_traces",
+    "titleVi": "Dấu Vết Sinh Học",
+    "titleEn": "Biological Traces",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Vệt Máu", "labelEn": "Blood Stain" },
+      { "index": 1, "labelVi": "Sợi Tóc", "labelEn": "Hair Strand" },
+      { "index": 2, "labelVi": "Dấu Nước Bọt", "labelEn": "Saliva" },
+      { "index": 3, "labelVi": "Mẫu Móng Tay", "labelEn": "Fingernail" },
+      { "index": 4, "labelVi": "Dấu Vết Cắn", "labelEn": "Bite Mark" },
+      { "index": 5, "labelVi": "Không Còn Vết Tích", "labelEn": "No Traces" }
+    ]
+  },
+  {
+    "id": "tile_condition_of_property",
+    "titleVi": "Vị Trí Đồ Đạc",
+    "titleEn": "Condition of Property",
+    "type": "EVENT",
+    "options": [
+      { "index": 0, "labelVi": "Bị Lục Tung", "labelEn": "Ransacked" },
+      { "index": 1, "labelVi": "Nguyên Vẹn", "labelEn": "Intact" },
+      { "index": 2, "labelVi": "Bị Đập Vỡ", "labelEn": "Shattered" },
+      { "index": 3, "labelVi": "Bị Dịch Chuyển", "labelEn": "Moved" },
+      { "index": 4, "labelVi": "Bị Cất Giấu", "labelEn": "Hidden" },
+      { "index": 5, "labelVi": "Rơi Rải Rác Khắp Nơi", "labelEn": "Scattered" }
     ]
   }
 ]
