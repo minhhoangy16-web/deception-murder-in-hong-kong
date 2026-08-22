@@ -28,8 +28,8 @@ export const CardBadge: React.FC<CardBadgeProps> = ({
       onClick={isClickable ? onClick : undefined}
       className={`rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-200 select-none relative group ${
         isMeans
-          ? "bg-[#090e15] border border-slate-700/60 shadow-lg shadow-black/80 hover:border-sky-500/50"
-          : "bg-[#18070a] border border-rose-950/80 shadow-lg shadow-black/80 hover:border-rose-600/50"
+          ? "bg-[#10171c] border border-[#1f3a4d] shadow-lg shadow-black/80 hover:border-sky-400/60"
+          : "bg-[#261011] border border-[#542022] shadow-lg shadow-black/80 hover:border-rose-500/60"
       } ${
         isSelected
           ? isMeans
@@ -40,19 +40,19 @@ export const CardBadge: React.FC<CardBadgeProps> = ({
         isKeyCard ? "ring-4 ring-amber-400 animate-pulse-glow" : ""
       }`}
     >
-      {/* Top Header Information: Line 1 English Underlined + Line 2 Vietnamese */}
+      {/* Top Typography: Line 1 Underlined Bold English Uppercase + Line 2 Subtitle */}
       <div className="pt-2 px-2 pb-0.5 flex items-start justify-between gap-1 z-10">
         <div className="min-w-0 text-left w-full">
           <div
             className={`font-black text-[10px] sm:text-[11px] tracking-wider uppercase truncate underline decoration-1 underline-offset-2 ${
-              isMeans ? "text-slate-100 decoration-slate-500" : "text-amber-100 decoration-amber-700"
+              isMeans ? "text-slate-100 decoration-sky-700/80" : "text-amber-100 decoration-amber-800/80"
             }`}
           >
             {card.nameEn}
           </div>
           <div
             className={`text-[8.5px] sm:text-[9.5px] font-medium leading-tight truncate mt-0.5 ${
-              isMeans ? "text-slate-400" : "text-amber-200/70"
+              isMeans ? "text-sky-300/80" : "text-amber-200/80"
             }`}
           >
             {card.nameVi}
@@ -66,18 +66,15 @@ export const CardBadge: React.FC<CardBadgeProps> = ({
         )}
       </div>
 
-      {/* Center Artwork Canvas with Concentric Radial Oval Glow matching user image */}
-      <div className="relative flex-1 w-full flex items-center justify-center p-1 sm:p-2 min-h-[75px] sm:min-h-[85px] overflow-hidden">
-        {/* Concentric Elliptical Glow Aura */}
-        <div
-          className={`absolute inset-0 m-auto w-3/4 h-3/4 rounded-full blur-sm opacity-60 pointer-events-none transition-all duration-300 group-hover:scale-110 ${
-            isMeans
-              ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-700/40 via-cyan-900/20 to-transparent"
-              : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-600/35 via-rose-900/25 to-transparent"
-          }`}
-        />
-
-        <div className="relative z-10 w-full h-full flex items-center justify-center">
+      {/* Center Artwork Canvas with Smoky Radial Glow Aura matching Image 1 */}
+      <div
+        className={`relative flex-1 w-full flex items-center justify-center p-1.5 min-h-[78px] sm:min-h-[88px] overflow-hidden ${
+          isMeans
+            ? "bg-[radial-gradient(ellipse_at_center,_#203f54_0%,_#10171c_75%)]"
+            : "bg-[radial-gradient(ellipse_at_center,_#5e1c15_0%,_#261011_75%)]"
+        }`}
+      >
+        <div className="relative z-10 w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
           <CardIllustration
             cardId={card.id}
             cardNameEn={card.nameEn}

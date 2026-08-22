@@ -183,12 +183,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 4 Players per row grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-            {gameState.players.map((player) => (
+          {/* 3 Players per row grid (Max 3 Player Tables per row) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[1500px] mx-auto">
+            {gameState.players.map((player, idx) => (
               <PlayerSeat
                 key={player.id}
                 player={player}
+                seatIndex={idx + 1}
                 isCurrentPlayer={player.id === myPlayerId}
                 keyMeansId={gameState.murderSelection?.meansCardId}
                 keyClueId={gameState.murderSelection?.clueCardId}

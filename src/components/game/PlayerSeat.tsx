@@ -6,6 +6,7 @@ import { Shield, ShieldAlert, Award, Bot, Eye } from "lucide-react";
 
 interface PlayerSeatProps {
   player: Player;
+  seatIndex?: number;
   isCurrentPlayer: boolean;
   selectedMeansId?: string | null;
   selectedClueId?: string | null;
@@ -22,6 +23,7 @@ interface PlayerSeatProps {
 
 export const PlayerSeat: React.FC<PlayerSeatProps> = ({
   player,
+  seatIndex = 1,
   isCurrentPlayer,
   selectedMeansId,
   selectedClueId,
@@ -81,20 +83,20 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
 
   return (
     <div
-      className={`desk-panel rounded-2xl p-2.5 sm:p-3 transition-all duration-300 flex flex-col justify-between ${
+      className={`desk-panel rounded-3xl p-3 sm:p-3.5 transition-all duration-300 flex flex-col justify-between shadow-md ${
         isCurrentPlayer
-          ? "ring-2 ring-rose-500/70 shadow-xl shadow-rose-900/10"
+          ? "ring-2 ring-rose-500/70 shadow-xl shadow-rose-900/10 bg-gradient-to-b from-[#faf5ee] to-[#f4ebe1]"
           : isSuspectSelected
           ? "ring-2 ring-amber-500 shadow-xl"
           : ""
       }`}
     >
-      {/* Player Header Info Bar */}
-      <div className="flex items-center justify-between gap-1.5 border-b border-stone-300/80 pb-1.5 mb-2">
-        <div className="flex items-center gap-2 min-w-0">
+      {/* 1. Header: Avatar, Name + Tag, Badge Shield */}
+      <div className="flex items-center justify-between gap-1.5 border-b border-stone-300/80 pb-2 mb-2.5">
+        <div className="flex items-center gap-2.5 min-w-0">
           <div
             onClick={isSolveMode && onSelectSuspect ? () => onSelectSuspect(player.id) : undefined}
-            className={`rounded-xl shrink-0 ${
+            className={`rounded-2xl shrink-0 ${
               isSolveMode ? "cursor-pointer hover:ring-2 hover:ring-amber-500" : ""
             }`}
           >
@@ -102,17 +104,17 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
           </div>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-1">
-              <span className="text-xs sm:text-[13px] font-black text-stone-900 truncate">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs sm:text-[13.5px] font-black text-stone-900 truncate">
                 {player.name}
               </span>
               {isCurrentPlayer && (
-                <span className="px-1 py-0.2 rounded bg-rose-500 text-white text-[8px] font-bold shrink-0">
+                <span className="px-1.5 py-0.5 rounded-md bg-rose-600 text-white text-[8.5px] font-black tracking-wider shrink-0 shadow-xs">
                   {isVietnamese ? "BẠN" : "YOU"}
                 </span>
               )}
               {player.isBot && (
-                <span className="px-1 py-0.2 rounded bg-stone-300 text-stone-700 text-[8px] font-bold flex items-center gap-0.5 shrink-0">
+                <span className="px-1.5 py-0.5 rounded-md bg-stone-300 text-stone-700 text-[8.5px] font-black tracking-wider flex items-center gap-0.5 shrink-0">
                   <Bot className="w-2.5 h-2.5" /> BOT
                 </span>
               )}
@@ -128,20 +130,20 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           <div
             title={player.hasBadge ? "Còn Huy Hiệu Phá Án" : "Đã sử dụng Huy Hiệu"}
-            className={`px-1.5 py-0.5 rounded-lg border text-[9px] font-black flex items-center gap-0.5 ${
+            className={`px-2 py-1 rounded-xl border text-[9.5px] font-black flex items-center gap-1 shadow-xs ${
               player.hasBadge
                 ? "bg-amber-100 border-amber-400 text-amber-900"
                 : "bg-stone-200 border-stone-300 text-stone-400 opacity-60"
             }`}
           >
-            <Award className="w-3 h-3 text-amber-600" />
-            <span className="hidden xs:inline">{player.hasBadge ? "Huy hiệu" : "Hết"}</span>
+            <Award className={`w-3.5 h-3.5 ${player.hasBadge ? "text-amber-600" : "text-stone-400"}`} />
+            <span>{player.hasBadge ? "Huy hiệu" : "Hết"}</span>
           </div>
 
           {isSolveMode && !isCurrentPlayer && (
             <button
               onClick={() => onSelectSuspect && onSelectSuspect(player.id)}
-              className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase transition-colors ${
+              className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase transition-colors shadow-sm ${
                 isSuspectSelected
                   ? "bg-amber-500 text-slate-950 shadow-md"
                   : "bg-stone-200 hover:bg-stone-300 text-stone-800"
@@ -153,8 +155,8 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
         </div>
       </div>
 
-      {/* 4 Clues (Top Row - Brown/Crimson) matching Hình 2 */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mb-1.5">
+      {/* 2. Top Row: 4 Clues (Manh Mối - Crimson Glow) */}
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-2">
         {player.clueCards.map((card) => (
           <CardBadge
             key={card.id}
@@ -169,8 +171,8 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
         ))}
       </div>
 
-      {/* 4 Means (Bottom Row - Dark Slate) matching Hình 2 */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
+      {/* 3. Bottom Row: 4 Means (Hung Khí - Slate Teal Glow) */}
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-2.5">
         {player.meansCards.map((card) => (
           <CardBadge
             key={card.id}
@@ -183,6 +185,16 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
             lang={lang}
           />
         ))}
+      </div>
+
+      {/* 4. Footer Bàn: Tên bàn */}
+      <div className="border-t border-stone-200/90 pt-1.5 flex items-center justify-between text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+        <span className="text-stone-700 font-black">
+          BÀN {seatIndex} - {player.name.toUpperCase()}
+        </span>
+        <span className="text-[9px] text-stone-400">
+          4 CLUES / 4 MEANS
+        </span>
       </div>
     </div>
   );
