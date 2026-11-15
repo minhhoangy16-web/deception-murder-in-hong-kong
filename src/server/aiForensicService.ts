@@ -1,6 +1,13 @@
 import { Card, ForensicNote, Player, SceneTile } from "../types/game";
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
+import {
+  TILE_OPTION_TRAITS,
+  TRAIT_LABEL_VI,
+  TraitMap,
+  getCardTraits,
+  traitFit,
+} from "./forensicKnowledge";
 
 interface AIPlacementResult {
   placedTiles: SceneTile[];
@@ -9,190 +16,271 @@ interface AIPlacementResult {
   discardReason?: string;
 }
 
-// Local Semantic Matcher for Heuristic Engine & Fallback
-export function heuristicScoreOption(
-  tile: SceneTile,
-  optionIndex: number,
-  means: Card,
-  clue: Card,
-  innocentMeans: Card[],
-  innocentClues: Card[]
-): { score: number; reason: string } {
-  const opt = tile.options[optionIndex];
-  const optLabelVi = opt.labelVi.toLowerCase();
-  const optLabelEn = opt.labelEn.toLowerCase();
-  const tileTitleVi = tile.titleVi.toLowerCase();
-  
-  const mVi = (means.nameVi + " " + (means.category || "")).toLowerCase();
-  const mEn = means.nameEn.toLowerCase();
-  const cVi = (clue.nameVi + " " + (clue.category || "")).toLowerCase();
-  const cEn = clue.nameEn.toLowerCase();
-
-  let score = 10;
-  let reason = `AI liên kết với "${means.nameVi}" và "${clue.nameVi}"`;
-
-  // --- 1. CAUSE OF DEATH (Nguyên Nhân Tử Vong) ---
-  if (tile.type === "CAUSE_OF_DEATH" || tile.id === "tile_cause_of_death") {
-    if (mVi.includes("độc") || mVi.includes("thuốc") || mVi.includes("xyanua") || mVi.includes("poison") || mVi.includes("axit") || mVi.includes("tiêm") || mVi.includes("nấm") || mVi.includes("nhiễm")) {
-      if (optLabelEn.includes("poison") || optLabelVi.includes("độc")) {
-        score += 150;
-        reason = `Hung khí dạng độc dược/hóa chất (${means.nameVi}) dẫn đến trúng độc`;
-      }
-    } else if (mVi.includes("ngạt") || mVi.includes("thừng") || mVi.includes("gối") || mVi.includes("túi") || mVi.includes("nilon") || mVi.includes("khăn") || mVi.includes("ga độc") || mVi.includes("đuối") || mVi.includes("bọc")) {
-      if (optLabelEn.includes("suffocation") || optLabelVi.includes("ngạt")) {
-        score += 150;
-        reason = `Hung khí gây bít đường thở/ngạt khí (${means.nameVi})`;
-      }
-    } else if (mVi.includes("dao") || mVi.includes("găm") || mVi.includes("kiếm") || mVi.includes("rựa") || mVi.includes("cắt") || mVi.includes("cổ") || mVi.includes("chặt") || mVi.includes("kéo")) {
-      if (optLabelEn.includes("blood") || optLabelVi.includes("mất máu")) {
-        score += 140;
-        reason = `Vũ khí sắc bén gây vết thương hở và mất máu cấp (${means.nameVi})`;
-      } else if (optLabelEn.includes("injury") || optLabelVi.includes("thương")) {
-        score += 120;
-        reason = `Vũ khí sắc nhọn gây chấn thương nặng (${means.nameVi})`;
-      }
-    } else if (mVi.includes("búa") || mVi.includes("gậy") || mVi.includes("gạch") || mVi.includes("súng") || mVi.includes("bắn") || mVi.includes("xe") || mVi.includes("lu") || mVi.includes("vực") || mVi.includes("tạ") || mVi.includes("ống thép") || mVi.includes("bê tông")) {
-      if (optLabelEn.includes("injury") || optLabelVi.includes("chấn thương") || optLabelVi.includes("vết rách")) {
-        score += 140;
-        reason = `Lực tác động vật lý cực mạnh gây chấn thương nghiêm trọng (${means.nameVi})`;
-      }
-    } else if (mVi.includes("điện") || mVi.includes("lửa") || mVi.includes("nổ") || mVi.includes("nước sôi") || mVi.includes("dầu") || mVi.includes("xăng") || mVi.includes("lò")) {
-      if (optLabelEn.includes("accident") || optLabelVi.includes("tai nạn") || optLabelEn.includes("injury")) {
-        score += 130;
-        reason = `Tai nạn do nhiệt/điện giật/bỏng nặng (${means.nameVi})`;
-      }
-    }
-  }
-
-  // --- 2. LOCATION OF CRIME (Hiện Trường Vụ Án - Phải dung hòa CẢ Means & Clue) ---
-  if (tile.type === "LOCATION" || tile.id === "tile_location") {
-    if (mVi.includes("bếp") || mVi.includes("nước sôi") || mVi.includes("lò") || cVi.includes("cà phê") || cVi.includes("đồ ăn") || cVi.includes("bánh") || cVi.includes("trứng") || cVi.includes("bát") || cVi.includes("đũa") || cVi.includes("rượu")) {
-      if (optLabelEn.includes("kitchen") || optLabelVi.includes("bếp") || optLabelEn.includes("restaurant") || optLabelVi.includes("nhà hàng") || optLabelVi.includes("quán")) {
-        score += 150;
-        reason = `Địa điểm phù hợp với thực phẩm và đồ gia dụng bếp (${means.nameVi} + ${clue.nameVi})`;
-      }
-    } else if (cVi.includes("gối") || cVi.includes("quần") || cVi.includes("ảnh") || cVi.includes("nhẫn") || cVi.includes("chậu cây") || cVi.includes("cây cảnh") || mVi.includes("gậy bóng chày") || cVi.includes("tạp dề") || cVi.includes("ủi") || cVi.includes("quạt") || cVi.includes("lò xo")) {
-      if (optLabelEn.includes("living") || optLabelVi.includes("phòng khách") || optLabelVi.includes("nhà riêng") || optLabelEn.includes("bedroom") || optLabelVi.includes("phòng ngủ")) {
-        score += 145;
-        reason = `Địa điểm sinh hoạt tại gia nơi có cả ${means.nameVi} và ${clue.nameVi}`;
-      }
-    } else if (cVi.includes("thẻ") || cVi.includes("khách sạn") || cVi.includes("keycard") || cVi.includes("son") || cVi.includes("gạt tàn") || cVi.includes("thuốc lá") || cVi.includes("rượu") || cVi.includes("băng") || cVi.includes("vé")) {
-      if (optLabelEn.includes("hotel") || optLabelVi.includes("khách sạn") || optLabelEn.includes("pub") || optLabelVi.includes("quán bar") || optLabelVi.includes("phòng trọ")) {
-        score += 145;
-        reason = `Địa điểm lưu trú hoặc tụ tập giải trí (${clue.nameVi})`;
-      }
-    } else if (cVi.includes("máy tính") || cVi.includes("bàn phím") || cVi.includes("usb") || cVi.includes("tài liệu") || cVi.includes("chữ kí") || cVi.includes("chứng chỉ") || cVi.includes("tiền") || cVi.includes("kho") || cVi.includes("từ điển") || cVi.includes("ghim")) {
-      if (optLabelEn.includes("workplace") || optLabelVi.includes("văn phòng") || optLabelEn.includes("bank") || optLabelVi.includes("ngân hàng") || optLabelEn.includes("school") || optLabelVi.includes("trường")) {
-        score += 145;
-        reason = `Không gian làm việc/hành chính liên quan đến ${clue.nameVi}`;
-      }
-    } else if (mVi.includes("neo") || mVi.includes("cần câu") || mVi.includes("cát") || mVi.includes("biển") || mVi.includes("gạch") || mVi.includes("xi măng") || mVi.includes("búa") || mVi.includes("xe lu") || mVi.includes("khoan") || mVi.includes("dầu hỏa")) {
-      if (optLabelEn.includes("construction") || optLabelVi.includes("công trường") || optLabelEn.includes("alley") || optLabelVi.includes("hẻm") || optLabelEn.includes("harbor") || optLabelVi.includes("bến tàu") || optLabelEn.includes("park") || optLabelVi.includes("công viên")) {
-        score += 140;
-        reason = `Hiện trường thi công hoặc khu vực ngoài trời gắn liền ${means.nameVi}`;
-      }
-    }
-  }
-
-  // --- 3. DẤU VẾT ĐỂ LẠI (Trace Left Behind) ---
-  if (tileTitleVi.includes("dấu vết") || tile.id.includes("trace") || tile.id.includes("evidence_left")) {
-    if (cVi.includes("máu") || cVi.includes("vân tay") || cVi.includes("tóc") || cVi.includes("mẫu") || cVi.includes("móng") || cVi.includes("ong") || cVi.includes("mốc") || cVi.includes("mận")) {
-      if (optLabelVi.includes("sinh học") || optLabelEn.includes("biological") || optLabelVi.includes("vân tay") || optLabelEn.includes("fingerprint")) {
-        score += 150;
-        reason = `Bằng chứng để lại dấu vết sinh học/vân tay (${clue.nameVi})`;
-      }
-    } else if (cVi.includes("vé") || cVi.includes("chứng chỉ") || cVi.includes("tiền") || cVi.includes("từ điển") || cVi.includes("chữ kí") || cVi.includes("giấy")) {
-      if (optLabelVi.includes("giấy") || optLabelEn.includes("paper") || optLabelVi.includes("văn bản") || optLabelEn.includes("document")) {
-        score += 150;
-        reason = `Dấu vết để lại là giấy tờ/văn bản (${clue.nameVi})`;
-      }
-    } else if (cVi.includes("son") || cVi.includes("dầu") || cVi.includes("bùn") || cVi.includes("sơn") || cVi.includes("nước") || cVi.includes("chất lỏng")) {
-      if (optLabelVi.includes("chất lỏng") || optLabelEn.includes("fluid") || optLabelVi.includes("vết bẩn") || optLabelEn.includes("stain")) {
-        score += 140;
-        reason = `Dấu vết chất lỏng/vết màu sót lại (${clue.nameVi})`;
-      }
-    } else if (cVi.includes("áo") || cVi.includes("quần") || cVi.includes("vải") || cVi.includes("khăn") || cVi.includes("giày") || cVi.includes("tất")) {
-      if (optLabelVi.includes("sợi vải") || optLabelEn.includes("fabric") || optLabelVi.includes("trang phục") || optLabelEn.includes("clothes")) {
-        score += 140;
-        reason = `Dấu vết rơi rụng sợi vải từ đồ dùng cá nhân (${clue.nameVi})`;
-      }
-    }
-  }
-
-  // --- 4. BIỂU CẢM / TÌNH TRẠNG NẠN NHÂN (Victim's Expression / State) ---
-  if (tileTitleVi.includes("biểu cảm") || tileTitleVi.includes("tình trạng") || tile.id.includes("expression") || tile.id.includes("state")) {
-    if (mVi.includes("độc") || mVi.includes("ngủ") || mVi.includes("bịt") || mVi.includes("gối")) {
-      if (optLabelVi.includes("thanh thản") || optLabelEn.includes("peaceful") || optLabelVi.includes("nguyên vẹn") || optLabelEn.includes("calm")) {
-        score += 130;
-        reason = `Tử vong do ngộ độc/trong giấc ngủ không kịp phản ứng (${means.nameVi})`;
-      }
-    } else if (mVi.includes("chém") || mVi.includes("cắt") || mVi.includes("khoan") || mVi.includes("búa") || mVi.includes("súng") || mVi.includes("rựa")) {
-      if (optLabelVi.includes("hãi hùng") || optLabelEn.includes("frightened") || optLabelVi.includes("đau đớn") || optLabelEn.includes("pain") || optLabelVi.includes("chật vật") || optLabelEn.includes("struggle")) {
-        score += 135;
-        reason = `Bị tấn công trực diện gây kinh hoàng và giằng co (${means.nameVi})`;
-      }
-    }
-  }
-
-  // --- 5. ĐỘNG CƠ GÂY ÁN (Motive of Crime) ---
-  if (tileTitleVi.includes("động cơ") || tile.id.includes("motive")) {
-    if (cVi.includes("nhẫn") || cVi.includes("son") || cVi.includes("ảnh") || cVi.includes("quà") || cVi.includes("hình xăm")) {
-      if (optLabelVi.includes("tình ái") || optLabelEn.includes("jealousy") || optLabelVi.includes("thù hằn") || optLabelEn.includes("revenge")) {
-        score += 140;
-        reason = `Mối quan hệ cá nhân/tình cảm dẫn đến án mạng (${clue.nameVi})`;
-      }
-    } else if (cVi.includes("tiền") || cVi.includes("kho") || cVi.includes("ngân hàng") || cVi.includes("vé số") || cVi.includes("chứng chỉ") || cVi.includes("hộp dụng cụ")) {
-      if (optLabelVi.includes("tiền bạc") || optLabelEn.includes("money") || optLabelVi.includes("tống tiền") || optLabelEn.includes("blackmail")) {
-        score += 140;
-        reason = `Động cơ tranh chấp tài sản/tiền bạc (${clue.nameVi})`;
-      }
-    }
-  }
-
-  // Deduct points if this option also matches innocent players' cards
-  innocentMeans.forEach(im => {
-    if (im.nameVi && optLabelVi.includes(im.nameVi.toLowerCase())) {
-      score -= 15;
-    }
-  });
-
-  return { score, reason };
+interface CaseContext {
+  means: Card;
+  clue: Card;
+  innocentMeans: Card[];
+  innocentClues: Card[];
 }
 
-// Find the weakest EVENT scene tile to discard in Round 2 and Round 3
+export interface OptionEvaluation {
+  index: number;
+  /** How strongly this marker points at the key pair AND away from the other cards on the table. */
+  value: number;
+  /** Raw fit of the key cards with this option (no comparison with innocent cards). */
+  keyFit: number;
+  meansShared: string[];
+  clueShared: string[];
+  isNeutral: boolean;
+}
+
+// For Cause of Death the Means card is what matters; the Clue only breaks ties.
+function typeWeights(tile: SceneTile): { m: number; c: number } {
+  if (tile.type === "CAUSE_OF_DEATH") return { m: 1, c: 0.25 };
+  if (tile.type === "LOCATION") return { m: 1, c: 1 };
+  // Cause of Death already points strongly at the Means, so event tiles lean
+  // slightly toward the Key Evidence, which is usually harder to guess.
+  return { m: 0.85, c: 1.2 };
+}
+
+function optionTraits(tile: SceneTile, idx: number): TraitMap {
+  return TILE_OPTION_TRAITS[tile.id]?.[idx] || {};
+}
+
+/**
+ * Score one card type for one option:
+ *  - reward the key card's fit,
+ *  - subtract part of the average fit of the other cards of that type on the table
+ *    (a marker every card fits tells investigators nothing),
+ *  - bonus when the key card fits better than every innocent card (a unique pointer).
+ */
+function discriminativeScore(keyTraits: TraitMap, others: Card[], opt: TraitMap): { value: number; key: number; shared: string[] } {
+  const key = traitFit(keyTraits, opt);
+  if (others.length === 0) return { value: key.score, key: key.score, shared: key.shared };
+  let sum = 0;
+  let max = 0;
+  for (const o of others) {
+    const s = traitFit(getCardTraits(o.id), opt).score;
+    sum += s;
+    if (s > max) max = s;
+  }
+  const avg = sum / others.length;
+  let value = key.score - 0.6 * avg;
+  if (key.score > 0 && key.score > max) value += 2;
+  return { value, key: key.score, shared: key.shared };
+}
+
+export function evaluateTile(tile: SceneTile, ctx: CaseContext): OptionEvaluation[] {
+  const w = typeWeights(tile);
+  const mTraits = getCardTraits(ctx.means.id);
+  const cTraits = getCardTraits(ctx.clue.id);
+  return tile.options.map((_, idx) => {
+    const opt = optionTraits(tile, idx);
+    const m = discriminativeScore(mTraits, ctx.innocentMeans, opt);
+    const c = discriminativeScore(cTraits, ctx.innocentClues, opt);
+    return {
+      index: idx,
+      value: w.m * m.value + w.c * c.value,
+      keyFit: w.m * m.key + w.c * c.key,
+      meansShared: m.shared,
+      clueShared: c.shared,
+      isNeutral: !!opt.neutral,
+    };
+  });
+}
+
+/** Best option for a tile. When nothing on the tile relates to the case, prefer a neutral option so the marker does not mislead. */
+export function pickBestOption(tile: SceneTile, ctx: CaseContext): OptionEvaluation {
+  const evals = evaluateTile(tile, ctx);
+  const best = [...evals].sort((a, b) => b.value - a.value || b.keyFit - a.keyFit)[0];
+  if (best.keyFit <= 0) {
+    const neutral = evals.filter((e) => e.isNeutral).sort((a, b) => b.value - a.value)[0];
+    if (neutral) return neutral;
+  }
+  return best;
+}
+
+function labelTraits(tags: string[], max = 3): string {
+  return tags.slice(0, max).map((t) => TRAIT_LABEL_VI[t] || t).join(", ");
+}
+
+function explainChoice(tile: SceneTile, ev: OptionEvaluation, ctx: CaseContext): string {
+  const opt = tile.options[ev.index];
+  if (ev.keyFit <= 0) {
+    return ev.isNeutral
+      ? `Thẻ "${tile.titleVi}" không liên quan rõ đến vụ án — đặt ở "${opt.labelVi}" như một lựa chọn trung tính để không làm nhiễu điều tra.`
+      : `Thẻ "${tile.titleVi}" không liên quan rõ đến vụ án — đặt ở "${opt.labelVi}" vì đây là lựa chọn ít khớp với các thẻ khác trên bàn nhất.`;
+  }
+  const parts: string[] = [];
+  if (ev.meansShared.length) parts.push(`hung khí "${ctx.means.nameVi}" gợi ý ${labelTraits(ev.meansShared)}`);
+  if (ev.clueShared.length) parts.push(`bằng chứng "${ctx.clue.nameVi}" gợi ý ${labelTraits(ev.clueShared)}`);
+  return `Chọn "${opt.labelVi}" vì ${parts.join("; ")}.`;
+}
+
+/** Choose the most informative LOCATION tile (in the board game the Forensic Scientist picks one of the location tiles). */
+export function chooseLocationTile(
+  locationTiles: SceneTile[],
+  means: Card,
+  clue: Card,
+  allPlayers: Player[]
+): SceneTile {
+  const ctx = buildContext(means, clue, allPlayers);
+  let best = locationTiles[0];
+  let bestValue = -Infinity;
+  for (const tile of locationTiles) {
+    const ev = pickBestOption(tile, ctx);
+    const v = ev.keyFit > 0 ? ev.value : -100;
+    if (v > bestValue) {
+      bestValue = v;
+      best = tile;
+    }
+  }
+  return best;
+}
+
+// Find the least informative EVENT tile to discard in Round 2 and Round 3
 export function findWeakestSceneTileToDiscard(
   activeTiles: SceneTile[],
-  means: Card,
-  clue: Card,
-  innocentMeans: Card[],
-  innocentClues: Card[]
+  ctx: CaseContext
 ): { tileToDiscard: SceneTile; reason: string } {
   // Only EVENT tiles can be discarded (CAUSE_OF_DEATH and LOCATION are permanent)
-  const replaceableTiles = activeTiles.filter(t => t.type === "EVENT");
-
-  if (replaceableTiles.length === 0) {
-    return { tileToDiscard: activeTiles[2] || activeTiles[0], reason: "Thay thế manh mối cũ" };
+  const replaceable = activeTiles.filter((t) => t.type === "EVENT");
+  if (replaceable.length === 0) {
+    return { tileToDiscard: activeTiles[activeTiles.length - 1], reason: "Thay thế manh mối cũ" };
   }
 
-  let lowestScore = 999999;
-  let weakestTile = replaceableTiles[0];
-  let discardReason = `Thẻ "${weakestTile.titleVi}" ít liên quan nhất đến vụ án`;
-
-  replaceableTiles.forEach(tile => {
-    const currentMarkerIdx = tile.markerIndex ?? 0;
-    const scoreResult = heuristicScoreOption(tile, currentMarkerIdx, means, clue, innocentMeans, innocentClues);
-
-    if (scoreResult.score < lowestScore) {
-      lowestScore = scoreResult.score;
-      weakestTile = tile;
-      discardReason = `AI loại bỏ thẻ "${tile.titleVi}" vì ít liên quan nhất đến hung khí & bằng chứng`;
+  let weakest = replaceable[0];
+  let lowest = Infinity;
+  for (const tile of replaceable) {
+    const evals = evaluateTile(tile, ctx);
+    const current = evals[tile.markerIndex ?? 0];
+    const v = current.keyFit > 0 ? current.value : -50;
+    if (v < lowest) {
+      lowest = v;
+      weakest = tile;
     }
-  });
-
-  return { tileToDiscard: weakestTile, reason: discardReason };
+  }
+  return {
+    tileToDiscard: weakest,
+    reason: `Pháp y bỏ thẻ "${weakest.titleVi}" vì đây là dấu vết ít giúp phân biệt hung khí & bằng chứng nhất`,
+  };
 }
 
-// AI Placement Analysis
+function buildContext(means: Card, clue: Card, allPlayers: Player[]): CaseContext {
+  return {
+    means,
+    clue,
+    innocentMeans: allPlayers.flatMap((p) => p.meansCards).filter((m) => m.id !== means.id),
+    innocentClues: allPlayers.flatMap((p) => p.clueCards).filter((c) => c.id !== clue.id),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// LLM providers
+// ---------------------------------------------------------------------------
+interface LLMMarker {
+  tileId: string;
+  optionIndex: number;
+  reasoning?: string;
+}
+
+function buildLLMPrompt(tiles: SceneTile[], ctx: CaseContext): string {
+  const traitsOf = (c: Card) =>
+    Object.entries(getCardTraits(c.id))
+      .sort((a, b) => b[1] - a[1])
+      .map(([k]) => TRAIT_LABEL_VI[k] || k)
+      .slice(0, 6)
+      .join(", ");
+
+  const tileBlocks = tiles
+    .map((tile) => {
+      const evals = evaluateTile(tile, ctx).sort((a, b) => b.value - a.value);
+      const hints = evals
+        .slice(0, 3)
+        .filter((e) => e.keyFit > 0)
+        .map((e) => `[${e.index}] ${tile.options[e.index].labelVi}`)
+        .join(" > ");
+      return `- tileId "${tile.id}" — ${tile.titleVi} / ${tile.titleEn}
+${tile.options.map((o) => `    [${o.index}] ${o.labelVi} / ${o.labelEn}`).join("\n")}
+    Gợi ý của hệ chuyên gia (tốt → kém): ${hints || "không có lựa chọn nào liên quan rõ — chọn phương án trung tính"}`;
+    })
+    .join("\n");
+
+  return `Bạn là Nhà Giám Định Pháp Y (Forensic Scientist) trong board game "Deception: Murder in Hong Kong".
+Bạn biết đáp án và chỉ được giao tiếp bằng cách đặt 1 viên đạn đánh dấu (marker) lên 1 lựa chọn của mỗi thẻ hiện trường.
+Mục tiêu: giúp các thám tử đoán ĐÚNG cặp thẻ của hung thủ, phân biệt được với mọi thẻ khác trên bàn.
+
+ĐÁP ÁN BÍ MẬT
+- Hung khí (Means): ${ctx.means.nameVi} (${ctx.means.nameEn}) — đặc điểm: ${traitsOf(ctx.means)}
+- Bằng chứng (Key Evidence): ${ctx.clue.nameVi} (${ctx.clue.nameEn}) — đặc điểm: ${traitsOf(ctx.clue)}
+
+CÁC THẺ KHÁC ĐANG NẰM TRÊN BÀN (thẻ gây nhiễu — đừng chọn dấu vết khớp với chúng nhiều hơn đáp án):
+- Hung khí khác: ${ctx.innocentMeans.map((c) => c.nameVi).join(", ") || "(không có)"}
+- Bằng chứng khác: ${ctx.innocentClues.map((c) => c.nameVi).join(", ") || "(không có)"}
+
+QUY TẮC
+1. "Nguyên nhân tử vong" phải khớp đúng cơ chế gây chết của hung khí.
+2. "Địa điểm" là nơi cả hung khí và bằng chứng có thể cùng xuất hiện một cách tự nhiên.
+3. Thẻ sự kiện: chọn lựa chọn mô tả nổi bật nhất hung khí HOẶC bằng chứng, ưu tiên lựa chọn mà ít thẻ gây nhiễu cũng khớp.
+4. Nếu thẻ không liên quan gì, chọn phương án trung tính nhất (ví dụ "Không có gì", "Bình thường") để không đánh lạc hướng.
+5. Ưu tiên gợi ý của hệ chuyên gia trừ khi bạn có lý do rõ ràng tốt hơn.
+
+THẺ CẦN ĐẶT DẤU
+${tileBlocks}
+
+Trả lời DUY NHẤT bằng JSON theo đúng schema:
+{"markers":[{"tileId":"string","optionIndex":0,"reasoning":"1 câu tiếng Việt (tối đa 30 từ) giải thích liên hệ với hung khí/bằng chứng"}]}`;
+}
+
+function parseLLMMarkers(text: string): LLMMarker[] {
+  const tryParse = (s: string): unknown => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return undefined;
+    }
+  };
+  let data = tryParse(text);
+  if (data === undefined) {
+    const obj = text.match(/\{[\s\S]*\}/);
+    const arr = text.match(/\[[\s\S]*\]/);
+    data = (obj && tryParse(obj[0])) ?? (arr && tryParse(arr[0]));
+  }
+  const list = Array.isArray(data)
+    ? data
+    : data && typeof data === "object"
+      ? (data as Record<string, unknown>).markers || (data as Record<string, unknown>).tiles
+      : undefined;
+  if (!Array.isArray(list)) return [];
+  return list
+    .filter((m): m is LLMMarker => !!m && typeof m === "object" && typeof (m as LLMMarker).tileId === "string")
+    .map((m) => ({ tileId: m.tileId, optionIndex: Number(m.optionIndex), reasoning: m.reasoning }));
+}
+
+async function askGemini(prompt: string, apiKey: string): Promise<LLMMarker[]> {
+  const genAI = new GoogleGenAI({ apiKey });
+  const response = await genAI.models.generateContent({
+    model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+    contents: prompt,
+    config: { responseMimeType: "application/json", temperature: 0.2 },
+  });
+  return parseLLMMarkers(response.text || "");
+}
+
+async function askOpenAI(prompt: string, apiKey: string): Promise<LLMMarker[]> {
+  const openai = new OpenAI({ apiKey });
+  const completion = await openai.chat.completions.create({
+    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    messages: [{ role: "user", content: prompt }],
+    response_format: { type: "json_object" },
+    temperature: 0.2,
+  });
+  return parseLLMMarkers(completion.choices[0]?.message?.content || "");
+}
+
+// ---------------------------------------------------------------------------
+// Main entry point
+// ---------------------------------------------------------------------------
 export async function runAIForensicAnalysis(
   activeTiles: SceneTile[],
   targetMeans: Card,
@@ -205,230 +293,76 @@ export async function runAIForensicAnalysis(
   tileToDiscardId?: string,
   discardReason?: string
 ): Promise<AIPlacementResult> {
-  const innocentMeans = allPlayers.flatMap(p => p.meansCards).filter(m => m.id !== targetMeans.id);
-  const innocentClues = allPlayers.flatMap(p => p.clueCards).filter(c => c.id !== targetClue.id);
+  const ctx = buildContext(targetMeans, targetClue, allPlayers);
 
-  // For Round 2/3: Determine which EVENT tile to discard if not provided
+  // Round 2/3: decide which EVENT tile to discard if not provided
   let computedDiscardId = tileToDiscardId;
   let computedDiscardReason = discardReason;
-
   if (round > 1 && newTileToPlace && !computedDiscardId) {
-    const discardInfo = findWeakestSceneTileToDiscard(activeTiles, targetMeans, targetClue, innocentMeans, innocentClues);
-    computedDiscardId = discardInfo.tileToDiscard.id;
-    computedDiscardReason = discardInfo.reason;
+    const info = findWeakestSceneTileToDiscard(activeTiles, ctx);
+    computedDiscardId = info.tileToDiscard.id;
+    computedDiscardReason = info.reason;
   }
 
-  const tilesToAnalyze = round === 1 ? activeTiles : (newTileToPlace ? [newTileToPlace] : []);
+  const tilesToAnalyze = round === 1 ? activeTiles : newTileToPlace ? [newTileToPlace] : [];
 
-  // 1. Google Gemini Provider
-  if (provider === "gemini") {
+  // 1. Expert-system choice for every tile (always computed: used as fallback and to validate LLM output)
+  const expert = new Map<string, OptionEvaluation>();
+  for (const tile of tilesToAnalyze) expert.set(tile.id, pickBestOption(tile, ctx));
+
+  // 2. Optional LLM refinement
+  let llm: LLMMarker[] = [];
+  const key =
+    provider === "gemini" ? apiKey || process.env.GEMINI_API_KEY : provider === "openai" ? apiKey || process.env.OPENAI_API_KEY : undefined;
+  if (key && tilesToAnalyze.length > 0) {
     try {
-      const genAI = new GoogleGenAI({ apiKey: apiKey || process.env.GEMINI_API_KEY || "" });
-      const prompt = `You are the master Forensic Scientist in the game Deception: Murder in Hong Kong.
-Your sole goal is to place forensic markers (0-5) on scene tiles to guide detectives to the EXACT combination of Key Means and Key Clue.
-
-SECRET MURDER COMBINATION:
-- Key Means (Hung Khí): ${targetMeans.nameVi} (${targetMeans.nameEn})
-- Key Clue (Bằng Chứng): ${targetClue.nameVi} (${targetClue.nameEn})
-
-CRITICAL LOGIC RULES:
-1. ALWAYS cross-correlate BOTH items together!
-2. For LOCATION OF CRIME: Choose a location where BOTH items naturally coexist.
-3. For CAUSE OF DEATH: Accurately match the physical mechanism of the Key Means (${targetMeans.nameVi}).
-4. For EVENT TILES: Pick the option that uniquely describes a prominent attribute of the Key Clue (${targetClue.nameVi}) or Key Means (${targetMeans.nameVi}).
-
-Tiles to mark:
-${tilesToAnalyze.map(t => `
-Tile ID: "${t.id}" (${t.titleVi} / ${t.titleEn})
-Options:
-${t.options.map(o => `  [${o.index}] ${o.labelVi} / ${o.labelEn}`).join("\n")}
-`).join("\n")}
-
-Respond ONLY with a valid JSON array in this exact schema:
-[
-  {
-    "tileId": "string",
-    "optionIndex": number,
-    "reasoning": "Detailed sentence in Vietnamese explaining how this choice connects BOTH Key Means and Key Clue"
-  }
-]`;
-
-      const response = await genAI.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-      });
-
-      const text = response.text || "";
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]) as Array<{ tileId: string; optionIndex: number; reasoning: string }>;
-        const notes: ForensicNote[] = [];
-        let resultTiles: SceneTile[] = [];
-
-        if (round === 1) {
-          resultTiles = activeTiles.map(tile => {
-            const match = parsed.find(p => p.tileId === tile.id);
-            const markerIdx = (match && match.optionIndex >= 0 && match.optionIndex < tile.options.length)
-              ? match.optionIndex
-              : 0;
-            const chosenOpt = tile.options[markerIdx];
-            notes.push({
-              tileId: tile.id,
-              tileTitle: tile.titleVi,
-              selectedOption: chosenOpt.labelVi,
-              reasoning: match?.reasoning || `AI phân tích dấu vết phù hợp nhất với ${chosenOpt.labelVi}`,
-            });
-            return { ...tile, markerIndex: markerIdx, roundPlaced: 1 };
-          });
-        } else if (newTileToPlace) {
-          const match = parsed.find(p => p.tileId === newTileToPlace.id);
-          const markerIdx = (match && match.optionIndex >= 0 && match.optionIndex < newTileToPlace.options.length)
-            ? match.optionIndex
-            : 0;
-          const chosenOpt = newTileToPlace.options[markerIdx];
-          const updatedNewTile = { ...newTileToPlace, markerIndex: markerIdx, isNew: true, roundPlaced: round };
-          notes.push({
-            tileId: newTileToPlace.id,
-            tileTitle: newTileToPlace.titleVi,
-            selectedOption: chosenOpt.labelVi,
-            reasoning: match?.reasoning || `AI bổ sung manh mối mới: ${chosenOpt.labelVi}`,
-          });
-          // Exactly replace the computedDiscardId tile so active tiles remain at 6
-          resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
-        }
-
-        return { placedTiles: resultTiles, notes, discardedTileId: computedDiscardId, discardReason: computedDiscardReason };
-      }
+      const prompt = buildLLMPrompt(tilesToAnalyze, ctx);
+      llm = provider === "gemini" ? await askGemini(prompt, key) : await askOpenAI(prompt, key);
     } catch (err) {
-      console.warn("Gemini API call fell back to local Heuristic Engine:", err);
+      console.warn(`[AI Forensic] ${provider} failed, using expert system:`, err instanceof Error ? err.message : err);
     }
   }
 
-  // 2. OpenAI Provider
-  if (provider === "openai" && apiKey) {
-    try {
-      const openai = new OpenAI({ apiKey });
-      const prompt = `You are the master Forensic Scientist in Hong Kong.
-Key Means: ${targetMeans.nameVi} (${targetMeans.nameEn})
-Key Clue: ${targetClue.nameVi} (${targetClue.nameEn})
-
-Tiles to mark:
-${tilesToAnalyze.map(t => `Tile ID: ${t.id} (${t.titleVi}):\n${t.options.map(o => `[${o.index}] ${o.labelVi}`).join("\n")}`).join("\n\n")}
-
-Return a JSON array of { tileId: string, optionIndex: number, reasoning: string } that connects BOTH items seamlessly.`;
-
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-      });
-
-      const content = completion.choices[0]?.message?.content || "{}";
-      const parsedData = JSON.parse(content);
-      const parsed = Array.isArray(parsedData) ? parsedData : (parsedData.markers || parsedData.tiles || []);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        const notes: ForensicNote[] = [];
-        let resultTiles: SceneTile[] = [];
-
-        if (round === 1) {
-          resultTiles = activeTiles.map(tile => {
-            const match = parsed.find((p: { tileId: string; optionIndex: number; reasoning: string }) => p.tileId === tile.id);
-            const markerIdx = (match && match.optionIndex >= 0 && match.optionIndex < tile.options.length) ? match.optionIndex : 0;
-            const chosenOpt = tile.options[markerIdx];
-            notes.push({
-              tileId: tile.id,
-              tileTitle: tile.titleVi,
-              selectedOption: chosenOpt.labelVi,
-              reasoning: match?.reasoning || `AI phân tích dấu vết phù hợp nhất với ${chosenOpt.labelVi}`,
-            });
-            return { ...tile, markerIndex: markerIdx, roundPlaced: 1 };
-          });
-        } else if (newTileToPlace) {
-          const match = parsed.find((p: { tileId: string; optionIndex: number; reasoning: string }) => p.tileId === newTileToPlace.id);
-          const markerIdx = (match && match.optionIndex >= 0 && match.optionIndex < newTileToPlace.options.length) ? match.optionIndex : 0;
-          const chosenOpt = newTileToPlace.options[markerIdx];
-          const updatedNewTile = { ...newTileToPlace, markerIndex: markerIdx, isNew: true, roundPlaced: round };
-          notes.push({
-            tileId: newTileToPlace.id,
-            tileTitle: newTileToPlace.titleVi,
-            selectedOption: chosenOpt.labelVi,
-            reasoning: match?.reasoning || `AI bổ sung manh mối mới: ${chosenOpt.labelVi}`,
-          });
-          // Exactly replace the computedDiscardId tile so active tiles remain at 6
-          resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
-        }
-
-        return { placedTiles: resultTiles, notes, discardedTileId: computedDiscardId, discardReason: computedDiscardReason };
-      }
-    } catch (err) {
-      console.warn("OpenAI API call fell back to local Heuristic Engine:", err);
-    }
-  }
-
-  // 3. Smart Enhanced Heuristic Engine (Cross-correlation of Means & Clues)
   const notes: ForensicNote[] = [];
-  let resultTiles: SceneTile[] = [];
+  const decide = (tile: SceneTile): number => {
+    const best = expert.get(tile.id)!;
+    const evals = evaluateTile(tile, ctx);
+    const m = llm.find((x) => x.tileId === tile.id);
+    let chosen = best;
+    let reasoning = explainChoice(tile, best, ctx);
 
-  if (round === 1) {
-    resultTiles = activeTiles.map(tile => {
-      let bestIndex = 0;
-      let highestScore = -999;
-      let bestReason = "";
-
-      tile.options.forEach((_, idx) => {
-        const result = heuristicScoreOption(tile, idx, targetMeans, targetClue, innocentMeans, innocentClues);
-        if (result.score > highestScore) {
-          highestScore = result.score;
-          bestIndex = idx;
-          bestReason = result.reason;
-        }
-      });
-
-      const selectedOpt = tile.options[bestIndex];
-      notes.push({
-        tileId: tile.id,
-        tileTitle: tile.titleVi,
-        selectedOption: selectedOpt.labelVi,
-        reasoning: bestReason || `AI ghim dấu vết liên kết giữa ${targetMeans.nameVi} và ${targetClue.nameVi}`,
-      });
-
-      return {
-        ...tile,
-        markerIndex: bestIndex,
-        roundPlaced: 1,
-      };
-    });
-  } else if (newTileToPlace) {
-    let bestIndex = 0;
-    let highestScore = -999;
-    let bestReason = "";
-
-    newTileToPlace.options.forEach((_, idx) => {
-      const result = heuristicScoreOption(newTileToPlace, idx, targetMeans, targetClue, innocentMeans, innocentClues);
-      if (result.score > highestScore) {
-        highestScore = result.score;
-        bestIndex = idx;
-        bestReason = result.reason;
+    if (m && Number.isInteger(m.optionIndex) && m.optionIndex >= 0 && m.optionIndex < tile.options.length) {
+      const llmEval = evals[m.optionIndex];
+      // Reject LLM picks that have no link to the case while a linked option exists
+      // (this is what made hints feel unrelated to the crime).
+      const unrelated = llmEval.keyFit <= 0 && best.keyFit > 0;
+      // Reject picks that point much more at innocent cards than the expert pick.
+      const misleading = llmEval.value < best.value - 8;
+      if (!unrelated && !misleading) {
+        chosen = llmEval;
+        reasoning = (m.reasoning && m.reasoning.trim()) || explainChoice(tile, llmEval, ctx);
       }
-    });
-
-    const selectedOpt = newTileToPlace.options[bestIndex];
-    const updatedNewTile: SceneTile = {
-      ...newTileToPlace,
-      markerIndex: bestIndex,
-      isNew: true,
-      roundPlaced: round,
-    };
+    }
 
     notes.push({
-      tileId: newTileToPlace.id,
-      tileTitle: newTileToPlace.titleVi,
-      selectedOption: selectedOpt.labelVi,
-      reasoning: bestReason || `AI bổ sung gợi ý mới thu hẹp nghi phạm`,
+      tileId: tile.id,
+      tileTitle: tile.titleVi,
+      selectedOption: tile.options[chosen.index].labelVi,
+      reasoning,
     });
+    return chosen.index;
+  };
 
-    // Exactly replace the computedDiscardId tile so active tiles remain at 6
-    resultTiles = activeTiles.filter(t => t.id !== computedDiscardId).concat(updatedNewTile);
+  let resultTiles: SceneTile[] = activeTiles;
+  if (round === 1) {
+    resultTiles = activeTiles.map((tile) => ({ ...tile, markerIndex: decide(tile), roundPlaced: 1 }));
+  } else if (newTileToPlace) {
+    const updatedNewTile: SceneTile = { ...newTileToPlace, markerIndex: decide(newTileToPlace), isNew: true, roundPlaced: round };
+    // Replace the discarded tile in place so the board layout stays stable.
+    const idx = activeTiles.findIndex((t) => t.id === computedDiscardId);
+    resultTiles = activeTiles.map((t) => ({ ...t, isNew: false }));
+    if (idx >= 0) resultTiles[idx] = updatedNewTile;
+    else resultTiles = resultTiles.concat(updatedNewTile);
   }
 
   return {
