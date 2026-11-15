@@ -61,7 +61,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
     });
 
     socket.on("update_settings", ({ roomId, settings }) => {
-      const state = gameManager.updateSettings(roomId, settings);
+      const state = gameManager.updateSettings(roomId, settings, socket.id);
       if (state) syncRoom(roomId);
     });
 

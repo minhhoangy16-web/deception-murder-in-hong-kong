@@ -3,7 +3,7 @@ import meansData from "../data/means.json";
 import cluesData from "../data/clues.json";
 import sceneTilesData from "../data/sceneTiles.json";
 import bgmTracksData from "../data/bgmTracks.json";
-import { runAIForensicAnalysis } from "./aiForensicService";
+import { runAIForensicAnalysis, chooseLocationTile } from "./aiForensicService";
 
 
 const AVATARS = [
@@ -274,9 +274,11 @@ export class GameManager {
     return room;
   }
 
-  public updateSettings(roomId: string, newSettings: Partial<RoomSettings>): GameState | undefined {
+  public updateSettings(roomId: string, newSettings: Partial<RoomSettings>, requesterId?: string): GameState | undefined {
     const room = this.rooms.get(roomId);
     if (!room || room.phase !== "LOBBY") return undefined;
+    // Only the host may change room settings (when the caller is known).
+    if (requesterId && !room.players.find(p => p.id === requesterId)?.isHost) return undefined;
 
     room.settings = { ...room.settings, ...newSettings };
     return room;
@@ -449,7 +451,14 @@ export class GameManager {
     // Draw 6 Scene Tiles for the first time (Forensic Scientist deals cards only after murder selection)
     const allSceneTiles = shuffleArray(sceneTilesData as SceneTile[]);
     const causeOfDeathTile = allSceneTiles.find(t => t.type === "CAUSE_OF_DEATH")!;
-    const locationTile = allSceneTiles.find(t => t.type === "LOCATION")!;
+    // As in the board game, the Forensic Scientist chooses which "Location" tile to use:
+    // pick the one whose options describe the murder scene best.
+    const locationTile = chooseLocationTile(
+      allSceneTiles.filter(t => t.type === "LOCATION"),
+      means,
+      clue,
+      room.players
+    );
     const eventTiles = allSceneTiles.filter(t => t.type === "EVENT");
 
     const initial4Events = eventTiles.slice(0, 4);
@@ -943,6 +952,15 @@ export class GameManager {
       if (player?.role !== "MURDERER" && player?.role !== "ACCOMPLICE") {
         delete sanitized.murderSelection;
       }
+
+      // The Forensic notes explain the markers by naming the key Means/Clue,
+      // so they would give the answer away if sent before the game ends.
+      delete sanitized.forensicNotes;
+    }
+
+    // Never send the AI API key to anyone except the host who entered it.
+    if (!player?.isHost && sanitized.settings) {
+      sanitized.settings = { ...sanitized.settings, apiKey: sanitized.settings.apiKey ? "********" : "" };
     }
 
     return sanitized;
